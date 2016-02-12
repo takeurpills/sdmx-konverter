@@ -24,9 +24,7 @@ Dim ModuleName As String
 
 With ThisWorkbook.VBProject
     For i = .VBComponents.Count To 1 Step -1
-
         ModuleName = .VBComponents(i).CodeModule.name
-
         If ModuleName <> "expimpModule" Then
             If .VBComponents(i).Type <> 100 Then
                 .VBComponents.Remove .VBComponents(ModuleName)
@@ -38,8 +36,3 @@ With ThisWorkbook.VBProject
 End With
 
 End Sub
-
-Sub test1()
-mainForm.Show 0
-End Sub
-
