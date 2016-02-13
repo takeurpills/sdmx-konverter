@@ -22,7 +22,7 @@ Private Sub UserForm_Initialize()
     lbLeft.MultiSelect = 2
     lbRight.MultiSelect = 2
     
-    Me.BackColor = RGB(204, 236, 255)
+    mainForm.BackColor = RGB(204, 236, 255)
     chbLeft.BackColor = RGB(204, 236, 255)
     chbRight.BackColor = RGB(204, 236, 255)
     labIdLeft.BackColor = RGB(204, 236, 255)

@@ -112,10 +112,6 @@ Dim progIndicator As Integer
                     If inputWorksheet.Cells(1, 10).Value = "REG" Then
                     conversionCheck = True
                     End If
-                Case 4
-                    If inputWorksheet.Cells(1, 1).Value = "FREQ" And inputWorksheet.Cells(1, 6).Value = "MAIN" Then
-                    conversionCheck = True
-                    End If
                 Case Else
                     MsgBox "Nastala chyba. Prosím kontaktujte správcu aplikácie.", vbOKOnly, "Chyba"
             End Select
@@ -283,24 +279,6 @@ Dim paramValue As String
             ' Naèítanie zvyšných dvoch hodnôt popisných dát - neboli zahrnuté do symetrického cyklu
             parameterFix(16) = inputWorksheet.Cells(1, 8)
             parameterFix(17) = inputWorksheet.Cells(2, 8)
-            
-        Case 4
-            ' Naèítanie fixných popisných dát do pomocného pola z hlavièky hárku - 2*11 = 22 hodnôt
-            i = 0
-            
-            ReDim parameterFix(1 To 23)
-            
-            For s = 2 To 4 Step 2
-                For r = 1 To 11
-                    x = r + 11 * i
-                    paramValue = inputWorksheet.Cells(r, s)
-                    parameterFix(x) = paramValue
-                Next
-                i = i + 1
-            Next
-            ' Naèítanie zvyšnej 23ej (pozícia [12][1]) hodnoty popisných dát - nebola zahrnutá do symetrického cyklu
-            parameterFix(12) = inputWorksheet.Cells(12, 1)
-            
     End Select
 
 End Sub
@@ -341,7 +319,6 @@ Dim rowCount As Integer
                     outputWorksheet.Cells(rowStep, usedColumns(i)).Value = parameterFix(i)
                 Next i
             Next rowStep
-        
     End Select
     
 End Sub
@@ -624,26 +601,19 @@ End Sub
 '---------------------------
 Sub unloadForms()
 
-Dim box As OLEObject
+    Dim UF As Integer
 
     mainForm.chbLeft.Value = False
     mainForm.chbRight.Value = False
     mainForm.tbSourceFile.Value = ""
     mainForm.lbLeft.Clear
     mainForm.lbRight.Clear
-    mainForm.optSEC.Value = False
-    mainForm.optREG.Value = False
-    mainForm.optPENS.Value = False
-    mainForm.optMAIN.Value = False
-    mainForm.optSU.Value = False
 
     Unload progressForm
     
-    mainForm.Show vbModeless
-    
-'Dim MyActualForm As mainForm
+Dim MyActualForm As mainForm
 
-'If TypeName(MyActualForm) = "Nothing" Then Set MyActualForm = New mainForm
-'MyActualForm.Show vbModeless
+If TypeName(MyActualForm) = "Nothing" Then Set MyActualForm = New mainForm
+MyActualForm.Show
 
 End Sub
