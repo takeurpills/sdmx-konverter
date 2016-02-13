@@ -341,6 +341,19 @@ Dim rowCount As Integer
                     outputWorksheet.Cells(rowStep, usedColumns(i)).Value = parameterFix(i)
                 Next i
             Next rowStep
+            
+        Case 4
+            ' Inicializácia premennıch - usedColumns = do ktorıch ståpcov vıstupnej tabu¾ky sa majú napåòa dáta
+            '                            rowCount = spoèíta ko¾ko riadkov je vyplnenıch vo vıstupnej tabu¾ke (to¾ko riadkov bude naplnenıch)
+            usedColumns = Array(0, 1, 2, 5, 12, 13, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35)
+            rowCount = outputWorksheet.Cells(Rows.Count, "N").End(xlUp).Row
+            
+            ' Napåòanie popisnıch dát vo vıstupnej tabu¾ky od riadok = 1 do riadok = rowCount
+            For rowStep = 2 To rowCount
+                For i = 1 To 23
+                    outputWorksheet.Cells(rowStep, usedColumns(i)).Value = parameterFix(i)
+                Next i
+            Next rowStep
         
     End Select
     
@@ -389,6 +402,16 @@ Dim typeFlag As String
             endRange = endRangeInstrument
             
                 Call REGdataConversion(startRange, endRange, startRangeInstrument, endRangeInstrument)
+                
+        Case 4
+            startRangeInstrument = inputWorksheet.Range("F2").Value
+            endRangeInstrument = inputWorksheet.Range("F3").Value
+            
+            startRange = startRangeInstrument
+            endRange = endRangeInstrument
+            
+                Call MAINdataConversion(startRange, endRange, startRangeInstrument, endRangeInstrument)
+                
     End Select
     
 End Sub
