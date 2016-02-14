@@ -39,8 +39,8 @@ Attribute VB_Name = "mainModule"
     'InÈ
     '---------------
     Public xlApp As Object
-    Dim xlNew As Object
-    Dim xlOld As Excel.Application
+    Public xlNew As Object
+    Public xlOld As Excel.Application
     
     Dim fileToOpen As Variant
 
@@ -285,21 +285,23 @@ Dim paramValue As String
             parameterFix(17) = inputWorksheet.Cells(2, 8)
             
         Case 4
-            ' NaËÌtanie fixn˝ch popisn˝ch d·t do pomocnÈho pola z hlaviËky h·rku - 2*11 = 22 hodnÙt
-            i = 0
+            ' NaËÌtanie fixn˝ch popisn˝ch d·t do pomocnÈho pola z hlaviËky h·rku - 12+11 = 23 hodnÙt
             
             ReDim parameterFix(1 To 23)
             
             For s = 2 To 4 Step 2
-                For r = 1 To 11
-                    x = r + 11 * i
+                For r = 1 To 12
                     paramValue = inputWorksheet.Cells(r, s)
-                    parameterFix(x) = paramValue
+                    parameterFix(r) = paramValue
                 Next
-                i = i + 1
             Next
-            ' NaËÌtanie zvyönej 23ej (pozÌcia [12][1]) hodnoty popisn˝ch d·t - nebola zahrnut· do symetrickÈho cyklu
-            parameterFix(12) = inputWorksheet.Cells(12, 1)
+            
+            For s = 2 To 4 Step 2
+                For r = 13 To 23
+                    paramValue = inputWorksheet.Cells(r, s)
+                    parameterFix(r) = paramValue
+                Next
+            Next
             
     End Select
 
@@ -401,7 +403,7 @@ Dim typeFlag As String
             startRange = startRangeInstrument
             endRange = endRangeInstrument
             
-                Call REGdataConversion(startRange, endRange, startRangeInstrument, endRangeInstrument)
+                Call REGdataConversion(startRange, endRange)
                 
         Case 4
             startRangeInstrument = inputWorksheet.Range("F2").Value
@@ -410,7 +412,7 @@ Dim typeFlag As String
             startRange = startRangeInstrument
             endRange = endRangeInstrument
             
-                Call MAINdataConversion(startRange, endRange, startRangeInstrument, endRangeInstrument)
+                Call MAINdataConversion(startRange, endRange)
                 
     End Select
     
@@ -435,7 +437,7 @@ Dim specAccEntry As Integer
 Dim specBoolStr As Integer
 
 Dim obsValue As Double
-Dim counterPartArea As String
+Dim counterpartArea As String
 Dim refSector As String
 Dim accountingEntry As String
 Dim STO As String
@@ -507,7 +509,7 @@ Dim confSubString As String
                         
                         ' NaËÌtanie d·t do pomocn˝ch premenn˝ch
                         obsValue = inputWorksheet.Cells(rowStep, colStep).Value
-                        counterPartArea = inputWorksheet.Cells(leadingRowStart - 2, colStep).Value
+                        counterpartArea = inputWorksheet.Cells(leadingRowStart - 2, colStep).Value
                         refSector = inputWorksheet.Cells(leadingRowStart - 4, colStep).Value
                         STO = inputWorksheet.Cells(rowStep, leadingColStart - 3).Value
                         instrAsset = inputWorksheet.Cells(rowStep, leadingColStart - 2).Value
@@ -523,7 +525,7 @@ Dim confSubString As String
 
                         ' Uloûenie hodnÙt z pomocn˝ch premenn˝ch do prÌsluön˝ch stÂpcov v˝stupnÈho h·rku riadku "i"
                         outputWorksheet.Range("T" & i).Value = obsValue
-                        outputWorksheet.Range("D" & i).Value = counterPartArea
+                        outputWorksheet.Range("D" & i).Value = counterpartArea
                         outputWorksheet.Range("E" & i).Value = refSector
                         outputWorksheet.Range("H" & i).Value = accountingEntry
                         outputWorksheet.Range("I" & i).Value = STO
@@ -545,7 +547,7 @@ End Sub
 '---------------------------
 'Proced˙ra konverzia d·t REG
 '---------------------------
-Sub REGdataConversion(startRange As String, endRange As String, startRangeInstrument As String, endRangeInstrument As String)
+Sub REGdataConversion(startRange As String, endRange As String)
 
 Dim i As Integer
 Dim firstRow As Integer
@@ -572,7 +574,7 @@ Dim refArea As String
 
 Dim boolString As String
 
-    ' Vymedzenie Ëi sa jedn· o klasick˝ cyklus pre inötrumenty, alebo o öpeci·lny cyklus pre bilanËnÈ poloûky
+    ' Vymedzenie riadiacich prvkov cyklu
 
     Set leadingValueStart = Range(startRange)
     Set leadingValueEnd = Range(endRange)
@@ -643,11 +645,112 @@ Dim boolString As String
 End Sub
 
 '---------------------------
+'Proced˙ra konverzia d·t MAIN
+'---------------------------
+Sub MAINdataConversion(startRange As String, endRange As String)
+
+Dim i As Integer
+Dim firstRow As Integer
+Dim lastRow As Integer
+Dim leadingRowStart As Integer
+Dim leadingRowEnd As Integer
+Dim leadingColStart As Integer
+Dim leadingColEnd As Integer
+Dim leadingValueStart As Range
+Dim leadingValueEnd As Range
+    
+Dim counterpartArea As String
+Dim refSector As String
+Dim accountingEntry As String
+Dim STO As String
+Dim instrAsset As String
+Dim expenditure As String
+Dim unitMeasure As String
+Dim unitMult As String
+Dim obsValue As Double
+Dim obsStatus As String
+Dim confStatus As String
+Dim activity As String
+Dim timePeriod As String
+
+Dim boolString As String
+
+    ' Vymedzenie riadiacich prvkov cyklu
+
+    Set leadingValueStart = Range(startRange)
+    Set leadingValueEnd = Range(endRange)
+    
+    leadingRowStart = leadingValueStart.Row
+    leadingRowEnd = leadingValueEnd.Row
+    
+    firstRow = leadingRowStart
+    lastRow = leadingRowEnd
+    
+    ' Inicializ·cia riadiacich hodnÙt - zaËiatoËn˝ stÂpec, koneËn˝ stÂpec
+    leadingColStart = leadingValueStart.Column
+    leadingColEnd = leadingValueEnd.Column
+    
+
+    ' V˝poËet poslednÈho vyplnenÈho riadku vo v˝stupnej tabuæke (i), od [i+1] sa zaËn˙ kopÌrovaù novÈ hodnoty
+    i = outputWorksheet.Cells(Rows.Count, "T").End(xlUp).Row
+    i = i + 1
+    
+    ' Hlavn˝ cyklus konverzie
+    For rowStep = firstRow To lastRow
+        
+        ' Kontrola na naËÌtanie riadku
+        If inputWorksheet.Cells(rowStep, leadingColStart - 1).Value = 1 Then
+        
+            For colStep = leadingColStart To leadingColEnd
+                
+                ' Kontrola na naËÌtanie stÂpca
+                boolString = inputWorksheet.Cells(firstRow - 1, colStep).Value
+                
+                    If boolString = "1" Then
+                        
+                        ' NaËÌtanie d·t do pomocn˝ch premenn˝ch
+                        counterpartArea = inputWorksheet.Cells(leadingRowStart - 9, colStep).Value
+                        refSector = inputWorksheet.Cells(leadingRowStart - 8, colStep).Value
+                        accountingEntry = inputWorksheet.Cells(leadingRowStart - 7, colStep).Value
+                        STO = inputWorksheet.Cells(leadingRowStart - 6, colStep).Value
+                        instrAsset = inputWorksheet.Cells(leadingRowStart - 5, colStep).Value
+                        expenditure = inputWorksheet.Cells(leadingRowStart - 4, colStep).Value
+                        unitMeasure = inputWorksheet.Cells(leadingRowStart - 3, colStep).Value
+                        unitMult = inputWorksheet.Cells(leadingRowStart - 2, colStep).Value
+                        obsValue = inputWorksheet.Cells(rowStep, colStep).Value
+                        obsStatus = inputWorksheet.Cells(rowStep, colStep + 1).Value
+                        confStatus = inputWorksheet.Cells(rowStep, colStep + 2).Value
+                        activity = inputWorksheet.Cells(rowStep, colStep + 3).Value
+                        timePeriod = inputWorksheet.Cells(rowStep, colStep + 4).Value
+
+                        ' Uloûenie hodnÙt z pomocn˝ch premenn˝ch do prÌsluön˝ch stÂpcov v˝stupnÈho h·rku riadku "i"
+                        outputWorksheet.Range("P" & i).Value = obsValue
+                        outputWorksheet.Range("D" & i).Value = counterpartArea
+                        outputWorksheet.Range("E" & i).Value = refSector
+                        outputWorksheet.Range("G" & i).Value = accountingEntry
+                        outputWorksheet.Range("H" & i).Value = STO
+                        outputWorksheet.Range("I" & i).Value = instrAsset
+                        outputWorksheet.Range("J" & i).Value = activity
+                        outputWorksheet.Range("K" & i).Value = expenditure
+                        outputWorksheet.Range("L" & i).Value = unitMeasure
+                        outputWorksheet.Range("O" & i).Value = timePeriod
+                        outputWorksheet.Range("Q" & i).Value = obsStatus
+                        outputWorksheet.Range("R" & i).Value = confStatus
+                        outputWorksheet.Range("AC" & i).Value = unitMult
+
+                        ' Inkrement·cia poËÌtadla riadkov
+                        i = i + 1
+                        
+                End If
+            Next colStep
+        End If
+    Next rowStep
+End Sub
+
+'---------------------------
 'Proced˙ra reset formul·rov
 '---------------------------
 Sub unloadForms()
-
-Dim box As OLEObject
 
     mainForm.chbLeft.Value = False
     mainForm.chbRight.Value = False
@@ -663,10 +766,5 @@ Dim box As OLEObject
     Unload progressForm
     
     mainForm.Show vbModeless
-    
-'Dim MyActualForm As mainForm
-
-'If TypeName(MyActualForm) = "Nothing" Then Set MyActualForm = New mainForm
-'MyActualForm.Show vbModeless
 
 End Sub
