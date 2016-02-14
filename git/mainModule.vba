@@ -93,7 +93,8 @@ Dim progIndicator As Integer
             ' Spustenie "ErrHandler" ak sa vyskytne chyba
             On Error GoTo Errhandler
             
-            Set outputWorksheet = xlNew.Workbooks.Open(ThisWorkbook.Path & "\" & outputFile).Worksheets(1)
+            xlNew.Workbooks.Add (1)
+            Set outputWorksheet = xlNew.ActiveWorkbook.Worksheets(1)
             
             ' Vypnutie "ErrHandler"
             On Error GoTo 0
@@ -136,11 +137,12 @@ Dim progIndicator As Integer
                 
                 ' Uloženie výstupu
                 folderPath = xlApp.ActiveWorkbook.Path
-                timeStamp = Format(CStr(Now), "yyyy_mm_dd_hh_mm")
+                timeStamp = Format(CStr(Now), "yyyy_mm_dd_hh_mm_ss")
                 saveName = folderPath & "\" & typeString & "_" & nameString & "_" & timeStamp
     
-                xlNew.Workbooks(1).SaveAs Filename:=saveName, FileFormat:=51
+                xlNew.Workbooks(1).SaveAs Filename:=saveName, FileFormat:=xlCSV
                 xlNew.ScreenUpdating = True
+                xlNew.Workbooks(1).Saved = True
                 xlNew.Quit
                 
             Else
@@ -152,17 +154,6 @@ Dim progIndicator As Integer
             Call unloadForms
             
             xlApp.Quit
-        
-'            If xlOld.Workbooks.Count = 1 Then
-'               xlOld.ThisWorkbook.Saved = True
-'               xlOld.Quit
-'            ElseIf xlOld.Workbooks.Count > 1 Then
-'               xlOld.ThisWorkbook.Saved = True
-'               xlOld.Visible = True
-'               xlOld.ThisWorkbook.Close
-'            Else
-'                MsgBox "Nastala chyba. Prosím kontaktujte správcu aplikácie.", vbOKOnly, "Chyba"
-'            End If
             
         End If
         
