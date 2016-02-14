@@ -71,27 +71,9 @@ Dim progIndicator As Integer
         
             Set xlNew = CreateObject("Excel.Application")
             xlNew.ScreenUpdating = False
-            
-            Select Case conversionAlg
-                Case 1
-                    outputFile = "esa2010-NA_SEC_accounts.xlsx"
-                    typeString = "NA_SEC"
-                Case 2
-                    outputFile = "esa2010-NA_REG.xlsx"
-                    typeString = "NA_REG"
-                Case 3
-                    outputFile = "esa2010-NA_PENS.xlsx"
-                    typeString = "NA_PENS"
-                Case 4
-                    outputFile = "esa2010-NA_MAIN_accounts.xlsx"
-                    typeString = "NA_MAIN"
-                Case 5
-                    outputFile = "esa2010-NA_SU.xlsx"
-                    typeString = "NA_SU"
-            End Select
                         
             ' Spustenie "ErrHandler" ak sa vyskytne chyba
-            On Error GoTo Errhandler
+            ' On Error GoTo Errhandler
             
             xlNew.Workbooks.Add (1)
             Set outputWorksheet = xlNew.ActiveWorkbook.Worksheets(1)
@@ -137,12 +119,12 @@ Dim progIndicator As Integer
                 
                 ' Uloûenie v˝stupu
                 folderPath = xlApp.ActiveWorkbook.Path
-                timeStamp = Format(CStr(Now), "yyyy_mm_dd_hh_mm_ss")
-                saveName = folderPath & "\" & typeString & "_" & nameString & "_" & timeStamp
+                timeStamp = Format(CStr(Now), "yyyy_mm_dd_hhmmss")
+                saveName = folderPath & "\" & nameString & "_" & timeStamp
     
-                xlNew.Workbooks(1).SaveAs Filename:=saveName, FileFormat:=xlCSV
+                xlNew.Workbooks(1).SaveAs Filename:=saveName, FileFormat:=xlCSV, local:=True
                 xlNew.ScreenUpdating = True
-                xlNew.Workbooks(1).Saved = True
+                xlNew.Workbooks(1).Close False
                 xlNew.Quit
                 
             Else
@@ -161,12 +143,12 @@ Dim progIndicator As Integer
     End If
     Exit Sub
     
-Errhandler:
-
-    errorMsg = "Nebol n·jden˝ s˙bor - """ & outputFile & """ !" & vbNewLine & vbNewLine
-    errorMsg = errorMsg & "ï ProsÌm umiestnite tento s˙bor do prieËinka tejto aplik·cie!"
-
-      MsgBox errorMsg, , "Chyba"
+'Errhandler:
+'
+'    errorMsg = "Nebol n·jden˝ s˙bor - """ & outputFile & """ !" & vbNewLine & vbNewLine
+'    errorMsg = errorMsg & "ï ProsÌm umiestnite tento s˙bor do prieËinka tejto aplik·cie!"
+'
+'    MsgBox errorMsg, , "Chyba"
     
 End Sub
 
@@ -648,6 +630,9 @@ Dim leadingColStart As Integer
 Dim leadingColEnd As Integer
 Dim leadingValueStart As Range
 Dim leadingValueEnd As Range
+
+Dim headerNames As Variant
+Dim columnNames As Variant
     
 Dim counterpartArea As String
 Dim refSector As String
@@ -680,7 +665,13 @@ Dim boolString As String
     leadingColStart = leadingValueStart.Column
     leadingColEnd = leadingValueEnd.Column
     
-
+    ' Vyplnenie hlaviËky dokumentu
+    headerNames = Array("FREQ", "ADJUSTMENT", "REF_AREA", "COUNTERPART_AREA", "REF_SECTOR", "COUNTERPART_SECTOR", "ACCOUNTING_ENTRY", "STO", "INSTR_ASSET", "ACTIVITY", "EXPENDITURE", "UNIT_MEASURE", "PRICES", "TRANSFORMATION", "TIME_PERIOD", "OBS_VALUE", "OBS_STATUS", "CONF_STATUS", "COMMENT_OBS", "PRE_BREAK_VALUE", "EMBARGO_DATE", "REF_PERIOD_DETAIL", "TIME_FORMAT", "TIME_PER_COLLECT", "REF_YEAR_PRICE", "DECIMALS", "TABLE_IDENTIFIER", "TITLE", "UNIT_MULT", "LAST_UPDATE", "COMPILING_ORG", "COMMENT_DSET", "COMMENT_TS", "DATA_COMP", "CURRENCY", "DISS_ORG")
+    columnNames = Array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ")
+    For i = 0 To 35
+        outputWorksheet.Range(columnNames(i) & "1").Value = headerNames(i)
+    Next i
+    
     ' V˝poËet poslednÈho vyplnenÈho riadku vo v˝stupnej tabuæke (i), od [i+1] sa zaËn˙ kopÌrovaù novÈ hodnoty
     i = outputWorksheet.Cells(Rows.Count, "T").End(xlUp).Row
     i = i + 1
