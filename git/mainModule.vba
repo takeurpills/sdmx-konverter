@@ -289,18 +289,17 @@ Dim paramValue As String
             
             ReDim parameterFix(1 To 23)
             
-            For s = 2 To 4 Step 2
-                For r = 1 To 12
-                    paramValue = inputWorksheet.Cells(r, s)
-                    parameterFix(r) = paramValue
-                Next
+            s = 2
+            For r = 1 To 12
+                paramValue = inputWorksheet.Cells(r, s)
+                parameterFix(r) = paramValue
             Next
             
-            For s = 2 To 4 Step 2
-                For r = 13 To 23
-                    paramValue = inputWorksheet.Cells(r, s)
-                    parameterFix(r) = paramValue
-                Next
+            s = 4
+            For r = 1 To 11
+                x = r + 12
+                paramValue = inputWorksheet.Cells(r, s)
+                parameterFix(x) = paramValue
             Next
             
     End Select
@@ -347,8 +346,8 @@ Dim rowCount As Integer
         Case 4
             ' Inicializácia premennıch - usedColumns = do ktorıch ståpcov vıstupnej tabu¾ky sa majú napåòa dáta
             '                            rowCount = spoèíta ko¾ko riadkov je vyplnenıch vo vıstupnej tabu¾ke (to¾ko riadkov bude naplnenıch)
-            usedColumns = Array(0, 1, 2, 5, 12, 13, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35)
-            rowCount = outputWorksheet.Cells(Rows.Count, "N").End(xlUp).Row
+            usedColumns = Array(0, 1, 2, 3, 6, 13, 14, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36)
+            rowCount = outputWorksheet.Cells(Rows.Count, "P").End(xlUp).Row
             
             ' Napåòanie popisnıch dát vo vıstupnej tabu¾ky od riadok = 1 do riadok = rowCount
             For rowStep = 2 To rowCount
