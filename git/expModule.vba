@@ -1,4 +1,4 @@
-Attribute VB_Name = "impModule"
+Attribute VB_Name = "expModule"
 Option Explicit
 
 Sub SaveCodeModules()

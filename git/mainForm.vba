@@ -18,7 +18,7 @@ Option Explicit
 Dim i As Integer
 
 Private Sub UserForm_Initialize()
-
+    
     Application.Visible = True
     
     lbLeft.MultiSelect = 2
@@ -33,6 +33,7 @@ Private Sub UserForm_Initialize()
     labNameRight.BackColor = RGB(204, 236, 255)
     labSourceFile.BackColor = RGB(204, 236, 255)
     labConversionAlg.BackColor = RGB(204, 236, 255)
+    labVersion.BackColor = RGB(204, 236, 255)
     optMAIN.BackColor = RGB(204, 236, 255)
     optPENS.BackColor = RGB(204, 236, 255)
     optREG.BackColor = RGB(204, 236, 255)
@@ -56,33 +57,14 @@ Private Sub UserForm_Initialize()
     labSourceFile.Font.Bold = True
     cbBrowseFile.Font.Bold = True
     cbRun.Font.Bold = True
+    
+    labVersion.Caption = versionId
         
 End Sub
 
 Private Sub UserForm_Terminate()
 
-    Application.Visible = True
-
-    Set xlOld = GetObject(ActiveWorkbook.FullName).Application
-
-    If xlOld.Workbooks.Count = 1 Then
-        xlOld.ThisWorkbook.Saved = True
-        If xlApp Is Nothing Then
-        Else
-            xlApp.Quit
-        End If
-        xlOld.Quit
-    ElseIf xlOld.Workbooks.Count > 1 Then
-        xlOld.ThisWorkbook.Saved = True
-        xlOld.Visible = True
-        If xlApp Is Nothing Then
-        Else
-            xlApp.Quit
-        End If
-        xlOld.ThisWorkbook.Close
-    Else
-        MsgBox "Nastala chyba. Prosím kontaktujte správcu aplikácie.", , "Chyba"
-    End If
+    appClose
 
 End Sub
 
@@ -174,16 +156,16 @@ Private Sub cbRun_Click()
 
 Dim j As Integer
 Dim myCount As Integer
-Dim algType As Integer        ' 1 = NA_SEC / 2 = NA_REG / 3 = NA_PENS / 4 = NA_MAIN / 5 = NA_SU
+Dim algType As Integer
 
 algType = 0
 myCount = 0
 
-If optSEC = True Then algType = 1
-If optREG = True Then algType = 2
-If optPENS = True Then algType = 3
-If optMAIN = True Then algType = 4
-If optSU = True Then algType = 5
+If optSEC = True Then algType = NA_SEC
+If optREG = True Then algType = NA_REG
+If optPENS = True Then algType = NA_PENS
+If optMAIN = True Then algType = NA_MAIN
+If optSU = True Then algType = NA_SU
 
 If algType > 0 Then
 
@@ -191,15 +173,15 @@ If algType > 0 Then
         lbRight.Selected(i) = True
     Next i
     
-    Erase myArray()
+    Erase inputSheetsId()
     myCount = lbRight.ListCount
     
     j = 1
     
     For i = 1 To myCount
         If lbRight.Selected(i - 1) Then
-            ReDim Preserve myArray(1 To j)
-            myArray(j) = lbRight.List(i - 1, 0)
+            ReDim Preserve inputSheetsId(1 To j)
+            inputSheetsId(j) = lbRight.List(i - 1, 0)
             j = j + 1
         End If
     Next
@@ -230,3 +212,4 @@ Dim i As Long, j As Long, x As Long, temp As String
     End With
 
 End Sub
+

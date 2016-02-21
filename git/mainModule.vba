@@ -9,12 +9,19 @@ Attribute VB_Name = "mainModule"
 '                                                                                       '
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-
 '--------------------------------
 'Deklar·cia glob·lnych premenn˝ch
 '--------------------------------
-    
     Option Explicit
+    
+    '--------------
+    'Konötanty
+    '--------------
+    Public Const NA_SEC = 1
+    Public Const NA_REG = 2
+    Public Const NA_PENS = 3
+    Public Const NA_MAIN = 4
+    Public Const NA_SU = 5
     
     '--------------
     'Pohyby a skoky
@@ -23,10 +30,10 @@ Attribute VB_Name = "mainModule"
     Dim colStep As Integer
            
     '------------
-    'PomocnÈ pole
+    'PomocnÈ polia
     '------------
     Dim parameterFix() As Variant
-    Public myArray() As Integer
+    Public inputSheetsId() As Integer
     
     '-------------
     'PouûitÈ h·rky
@@ -41,12 +48,28 @@ Attribute VB_Name = "mainModule"
     Public xlApp As Object
     Public xlNew As Object
     Public xlOld As Excel.Application
+    Public versionId As String
+    Public instanceName As String
     
     Dim fileToOpen As Variant
 
+
+'-----------------
+' InicializaËn· proced˙ra
+'-----------------
+Sub initSub()
+
+Dim tempPath As String
+    
+    versionId = "v0.2"
+    instanceName = ActiveWorkbook.FullName
+    
+    mainForm.Show vbModeless
+    
+End Sub
     
 '-----------------
-' Hlavn· proced˙ra
+' Hlavn· riadiaca proced˙ra
 '-----------------
 Sub mainSub(conversionAlg As Integer)
     
@@ -63,50 +86,44 @@ Dim progIndicator As Integer
 
     progIndicator = 0
     
+    ' Spustenie "ErrHandler" ak sa vyskytne chyba
+    On Error GoTo Errhandler
+    
     If fileToOpen <> False Then
-        If (Not myArray) = True Then
+        If (Not inputSheetsId) = True Then
             MsgBox "Nie s˙ zvolenÈ pracovnÈ h·rky pre konverziu!", , "Chyba"
         Else
-            For i = 1 To UBound(myArray)
+            For i = 1 To UBound(inputSheetsId)
         
             Set xlNew = CreateObject("Excel.Application")
             xlNew.ScreenUpdating = False
-                        
-            ' Spustenie "ErrHandler" ak sa vyskytne chyba
-            ' On Error GoTo Errhandler
             
             xlNew.Workbooks.Add (1)
             Set outputWorksheet = xlNew.ActiveWorkbook.Worksheets(1)
-            
-            ' Vypnutie "ErrHandler"
-            On Error GoTo 0
 
-            Set inputWorksheet = inputWorkbook.Worksheets(myArray(i))
+            Set inputWorksheet = inputWorkbook.Worksheets(inputSheetsId(i))
             nameString = inputWorksheet.name
 
             conversionCheck = False
             
             Select Case conversionAlg
-                Case 1
+                Case NA_SEC
                     If inputWorksheet.Cells(1, 1).Value = "FREQ" And inputWorksheet.Cells(6, 1).Value = "EXPENDITURE" Then
                     conversionCheck = True
                     End If
-                Case 2
+                Case NA_REG
                     If inputWorksheet.Cells(1, 10).Value = "REG" Then
                     conversionCheck = True
                     End If
-                Case 4
-                    If inputWorksheet.Cells(1, 1).Value = "FREQ" And inputWorksheet.Cells(1, 6).Value = "MAIN" Then
+                Case NA_MAIN
+                    If inputWorksheet.Cells(12, 1).Value = "TIME_PER_COLLECT" And inputWorksheet.Cells(1, 6).Value = "MAIN" Then
                     conversionCheck = True
                     End If
-                Case Else
-                    MsgBox "Nastala chyba. ProsÌm kontaktujte spr·vcu aplik·cie.", vbOKOnly, "Chyba"
             End Select
             
             If conversionCheck = True Then
             
                 ' Sp˙ötanie proced˙r
-                
                 If progIndicator = 0 Then
                     mainForm.Hide
                     progressForm.Show vbModeless
@@ -128,7 +145,9 @@ Dim progIndicator As Integer
                 xlNew.Quit
                 
             Else
-                MsgBox "Zvolen˝ h·rok - """ & nameString & """ nem· spr·vny form·t alebo bol zvolen˝ nespr·vny typ konverzie!", , "Chyba"
+                errorMsg = "Zvolen˝ h·rok - """ & nameString & """ nem· spr·vny form·t alebo bol zvolen˝ nespr·vny typ konverzie!" & vbNewLine & vbNewLine
+                errorMsg = errorMsg & "Konverzia h·rku sa nevykon·!"
+                MsgBox errorMsg, , "Chyba"
                 xlNew.Quit
             End If
             Next
@@ -143,12 +162,15 @@ Dim progIndicator As Integer
     End If
     Exit Sub
     
-'Errhandler:
-'
-'    errorMsg = "Nebol n·jden˝ s˙bor - """ & outputFile & """ !" & vbNewLine & vbNewLine
-'    errorMsg = errorMsg & "ï ProsÌm umiestnite tento s˙bor do prieËinka tejto aplik·cie!"
-'
-'    MsgBox errorMsg, , "Chyba"
+Errhandler:
+
+    On Error Resume Next
+
+    errorMsg = "Nastala chyba (#1001). ProsÌm kontaktujte spr·vcu aplik·cie."
+
+    MsgBox errorMsg, vbOKOnly, "Chyba"
+    
+    appClose
     
 End Sub
 
@@ -165,7 +187,7 @@ Sub openSourceFile()
     fileToOpen = Application.GetOpenFilename(FileFilter:="Vstupn˝ s˙bor,*.xls; *.xlsx; *.xlsm", Title:="Otvoriù s˙bor", MultiSelect:=False)
     
     If fileToOpen <> False Then
-        Set xlOld = GetObject(, "Excel.Application")
+        Set xlOld = GetObject(instanceName).Application
         Set xlApp = CreateObject("Excel.Application")
         Set inputWorkbook = xlApp.Workbooks.Open(Filename:=fileToOpen, ReadOnly:=True)
       
@@ -219,7 +241,7 @@ Dim x As Integer
 Dim paramValue As String
     
     Select Case conversionAlg
-        Case 1
+        Case NA_SEC
             ' NaËÌtanie fixn˝ch popisn˝ch d·t do pomocnÈho pola z hlaviËky h·rku - 6*5 = 30 hodnÙt
             i = 0
         
@@ -238,7 +260,7 @@ Dim paramValue As String
             parameterFix(31) = inputWorksheet.Cells(1, 12)
             parameterFix(32) = inputWorksheet.Cells(2, 12)
 
-        Case 2
+        Case NA_REG
             ' NaËÌtanie fixn˝ch popisn˝ch d·t do pomocnÈho pola z hlaviËky h·rku - 6*5 = 30 hodnÙt
             i = 0
         
@@ -257,7 +279,7 @@ Dim paramValue As String
             parameterFix(16) = inputWorksheet.Cells(1, 8)
             parameterFix(17) = inputWorksheet.Cells(2, 8)
             
-        Case 4
+        Case NA_MAIN
             ' NaËÌtanie fixn˝ch popisn˝ch d·t do pomocnÈho pola z hlaviËky h·rku - 12+11 = 23 hodnÙt
             
             ReDim parameterFix(1 To 23)
@@ -290,7 +312,7 @@ Dim usedColumns As Variant
 Dim rowCount As Integer
     
     Select Case conversionAlg
-        Case 1
+        Case NA_SEC
             ' Inicializ·cia premenn˝ch - usedColumns = do ktor˝ch stÂpcov v˝stupnej tabuæky sa maj˙ napÂÚaù d·ta
             '                            rowCount = spoËÌta koæko riadkov je vyplnen˝ch vo v˝stupnej tabuæke (toæko riadkov bude naplnen˝ch)
             usedColumns = Array(0, 1, 2, 3, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41)
@@ -303,7 +325,7 @@ Dim rowCount As Integer
                 Next i
             Next rowStep
             
-        Case 2
+        Case NA_REG
             ' Inicializ·cia premenn˝ch - usedColumns = do ktor˝ch stÂpcov v˝stupnej tabuæky sa maj˙ napÂÚaù d·ta
             '                            rowCount = spoËÌta koæko riadkov je vyplnen˝ch vo v˝stupnej tabuæke (toæko riadkov bude naplnen˝ch)
             usedColumns = Array(0, 1, 3, 4, 5, 13, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 28, 29)
@@ -316,7 +338,7 @@ Dim rowCount As Integer
                 Next i
             Next rowStep
             
-        Case 4
+        Case NA_MAIN
             ' Inicializ·cia premenn˝ch - usedColumns = do ktor˝ch stÂpcov v˝stupnej tabuæky sa maj˙ napÂÚaù d·ta
             '                            rowCount = spoËÌta koæko riadkov je vyplnen˝ch vo v˝stupnej tabuæke (toæko riadkov bude naplnen˝ch)
             usedColumns = Array(0, 1, 2, 3, 6, 13, 14, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36)
@@ -348,7 +370,7 @@ Dim endRangeBalance As String
 Dim typeFlag As String
 
     Select Case conversionAlg
-        Case 1
+        Case NA_SEC
             ' Inicializ·cia premenn˝ch obsahuj˙cich hodnoty riadiacich zaËiatkov/koncov (I = instrumenty, B = bilanËnÈ poloûky)
             startRangeInstrument = inputWorksheet.Range("L3").Value
             endRangeInstrument = inputWorksheet.Range("L4").Value
@@ -368,7 +390,7 @@ Dim typeFlag As String
         
                 Call SECdataConversion(startRange, endRange, startRangeInstrument, endRangeInstrument, typeFlag)
                 
-        Case 2
+        Case NA_REG
             startRangeInstrument = inputWorksheet.Range("J2").Value
             endRangeInstrument = inputWorksheet.Range("J3").Value
             
@@ -377,7 +399,7 @@ Dim typeFlag As String
             
                 Call REGdataConversion(startRange, endRange)
                 
-        Case 4
+        Case NA_MAIN
             startRangeInstrument = inputWorksheet.Range("F2").Value
             endRangeInstrument = inputWorksheet.Range("F3").Value
             
@@ -408,7 +430,7 @@ Dim leadingValueEnd As Range
 Dim specAccEntry As Integer
 Dim specBoolStr As Integer
 
-Dim obsValue As Double
+Dim obsValue As Variant
 Dim counterpartArea As String
 Dim refSector As String
 Dim accountingEntry As String
@@ -531,7 +553,7 @@ Dim leadingColEnd As Integer
 Dim leadingValueStart As Range
 Dim leadingValueEnd As Range
     
-Dim obsValue As Double
+Dim obsValue As Variant
 Dim accountingEntry As String
 Dim STO As String
 Dim obsStatus As String
@@ -642,7 +664,7 @@ Dim instrAsset As String
 Dim expenditure As String
 Dim unitMeasure As String
 Dim unitMult As String
-Dim obsValue As Double
+Dim obsValue As Variant
 Dim obsStatus As String
 Dim confStatus As String
 Dim activity As String
@@ -673,7 +695,7 @@ Dim boolString As String
     Next i
     
     ' V˝poËet poslednÈho vyplnenÈho riadku vo v˝stupnej tabuæke (i), od [i+1] sa zaËn˙ kopÌrovaù novÈ hodnoty
-    i = outputWorksheet.Cells(Rows.Count, "T").End(xlUp).Row
+    i = outputWorksheet.Cells(Rows.Count, "A").End(xlUp).Row
     i = i + 1
     
     ' Hlavn˝ cyklus konverzie
@@ -749,3 +771,42 @@ Sub unloadForms()
     mainForm.Show vbModeless
 
 End Sub
+
+'---------------------------
+'Proced˙ra vypnutia programu
+'---------------------------
+Sub appClose()
+
+    Application.Visible = True
+
+    Set xlOld = GetObject(instanceName).Application
+
+    If xlOld.Workbooks.Count = 1 Then
+        xlOld.ThisWorkbook.Saved = True
+        If xlApp Is Nothing Then
+        Else
+            xlApp.Quit
+        End If
+            If xlNew Is Nothing Then
+            Else
+                xlNew.Quit
+            End If
+        xlOld.Quit
+    ElseIf xlOld.Workbooks.Count > 1 Then
+        xlOld.ThisWorkbook.Saved = True
+        xlOld.Visible = True
+         If xlApp Is Nothing Then
+        Else
+            xlApp.Quit
+        End If
+            If xlNew Is Nothing Then
+            Else
+                xlNew.Quit
+            End If
+        xlOld.ThisWorkbook.Close
+    Else
+        MsgBox "Nastala chyba. ProsÌm kontaktujte spr·vcu aplik·cie.", , "Chyba"
+    End If
+
+End Sub
+
