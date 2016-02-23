@@ -13,6 +13,15 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'                                                                                       '
+'  Názov:  Konvertor ESA2010                                                            '
+'  Autor:  Martin Tóth - Štatistický úrad SR                                            '
+'                                                                                       '
+'  Popis:                                                                               '
+'                                                                                       '
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
 Option Explicit
 
 Dim i As Integer
@@ -32,7 +41,7 @@ Private Sub UserForm_Initialize()
     labNameLeft.BackColor = RGB(204, 236, 255)
     labNameRight.BackColor = RGB(204, 236, 255)
     labSourceFile.BackColor = RGB(204, 236, 255)
-    labConversionAlg.BackColor = RGB(204, 236, 255)
+    labConversionType.BackColor = RGB(204, 236, 255)
     labVersion.BackColor = RGB(204, 236, 255)
     optMAIN.BackColor = RGB(204, 236, 255)
     optPENS.BackColor = RGB(204, 236, 255)
@@ -40,7 +49,7 @@ Private Sub UserForm_Initialize()
     optSEC.BackColor = RGB(204, 236, 255)
     optSU.BackColor = RGB(204, 236, 255)
     
-    labConversionAlg.Font.Size = 9
+    labConversionType.Font.Size = 9
     labIdLeft.Font.Size = 10
     labIdRight.Font.Size = 10
     labNameLeft.Font.Size = 10
@@ -53,7 +62,7 @@ Private Sub UserForm_Initialize()
     cbRun.Font.Size = 12
     cbBrowseFile.Font.Size = 10
     
-    labConversionAlg.Font.Bold = True
+    labConversionType.Font.Bold = True
     labSourceFile.Font.Bold = True
     cbBrowseFile.Font.Bold = True
     cbRun.Font.Bold = True
@@ -156,39 +165,42 @@ Private Sub cbRun_Click()
 
 Dim j As Integer
 Dim myCount As Integer
-Dim algType As Integer
+Dim conversionType As Integer
+Dim errorMsg As String
 
-algType = 0
+conversionType = 0
 myCount = 0
 
-If optSEC = True Then algType = NA_SEC
-If optREG = True Then algType = NA_REG
-If optPENS = True Then algType = NA_PENS
-If optMAIN = True Then algType = NA_MAIN
-If optSU = True Then algType = NA_SU
+If optSEC = True Then conversionType = NA_SEC
+If optREG = True Then conversionType = NA_REG
+If optPENS = True Then conversionType = NA_PENS
+If optMAIN = True Then conversionType = NA_MAIN
+If optSU = True Then conversionType = NA_SU
 
-If algType > 0 Then
+If conversionType > 0 Then
 
     For i = 0 To lbRight.ListCount - 1
         lbRight.Selected(i) = True
     Next i
     
-    Erase inputSheetsId()
+    Erase inputWsId()
     myCount = lbRight.ListCount
     
     j = 1
     
     For i = 1 To myCount
         If lbRight.Selected(i - 1) Then
-            ReDim Preserve inputSheetsId(1 To j)
-            inputSheetsId(j) = lbRight.List(i - 1, 0)
+            ReDim Preserve inputWsId(1 To j)
+            inputWsId(j) = lbRight.List(i - 1, 0)
             j = j + 1
         End If
     Next
     
-    Call mainSub(algType)
+    Call mainSub(conversionType)
 
-Else: MsgBox "Nie je zvolený typ výstupnej tabu¾ky!", , "Chyba"
+Else
+    errorMsg = "Nie je zvolený typ výstupnej tabu¾ky!"
+    MsgBox errorMsg, vbExclamation, "Informatívna chyba"
 End If
 
 End Sub

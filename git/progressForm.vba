@@ -13,6 +13,15 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'                                                                                       '
+'  Názov:  Konvertor ESA2010                                                            '
+'  Autor:  Martin Tóth - Štatistický úrad SR                                            '
+'                                                                                       '
+'  Popis:                                                                               '
+'                                                                                       '
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
 Option Explicit
 
 Private Sub UserForm_Initialize()
