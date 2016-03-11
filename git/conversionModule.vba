@@ -24,11 +24,11 @@ Const SUB_NAME = "openSourceFile"
         mainForm.tbSourceFile.Value = inputWb.FullName
         mainForm.tbSourceFile.SetFocus
     
+        On Error GoTo 0
         Call inputItems
       
     End If
     
-    On Error GoTo 0
     Exit Sub
     
 errHandler:
@@ -49,9 +49,6 @@ Dim n As Integer  'Count
 Dim w As Integer  'Width
 Dim m As Integer  'Max
     
-    ' Spustenie "ErrHandler" ak sa vyskytne chyba
-    On Error GoTo errHandler
-    
     mainForm.lbLeft.Clear
     mainForm.lbRight.Clear
     
@@ -70,13 +67,6 @@ Dim m As Integer  'Max
     mainForm.lbLeft.ColumnWidths = 18 & ";" & m + 20
     mainForm.lbRight.ColumnWidths = 18 & ";" & m + 20
     
-    On Error GoTo 0
-    Exit Sub
-    
-errHandler:
-
-    errorHandler (SUB_NAME)
-
 End Sub
 
 
@@ -86,9 +76,6 @@ End Sub
 Sub unloadForms()
 
 Const SUB_NAME = "unloadForms"
-
-    ' Spustenie "ErrHandler" ak sa vyskytne chyba
-    On Error GoTo errHandler
 
     mainForm.chbLeft.Value = False
     mainForm.chbRight.Value = False
@@ -105,13 +92,6 @@ Const SUB_NAME = "unloadForms"
     
     mainForm.Show vbModeless
 
-    On Error GoTo 0
-    Exit Sub
-    
-errHandler:
-
-    errorHandler (SUB_NAME)
-
 End Sub
 
 
@@ -127,9 +107,6 @@ Dim r As Integer
 Dim s As Integer
 Dim x As Integer
 Dim paramValue As String
-
-    ' Spustenie "ErrHandler" ak sa vyskytne chyba
-    On Error GoTo errHandler
     
     Select Case conversionType
         Case NA_SEC
@@ -208,13 +185,6 @@ Dim paramValue As String
             
     End Select
 
-    On Error GoTo 0
-    Exit Sub
-    
-errHandler:
-
-    errorHandler (SUB_NAME)
-
 End Sub
 
 
@@ -227,20 +197,19 @@ Const SUB_NAME = "arrayFill"
 
 Dim i As Integer
 Dim usedColumns As Variant
-Dim rowCount As Integer
-
-    ' Spustenie "ErrHandler" ak sa vyskytne chyba
-    On Error GoTo errHandler
+Dim copyStart As Integer
+Dim copyEnd As Integer
     
     Select Case conversionType
         Case NA_SEC
             ' Inicializácia premennıch - usedColumns = do ktorıch ståpcov vıstupnej tabu¾ky sa majú napåòa dáta
-            '                            rowCount = spoèíta ko¾ko riadkov je vyplnenıch vo vıstupnej tabu¾ke (to¾ko riadkov bude naplnenıch)
+            '                            copyEnd = spoèíta ko¾ko riadkov je vyplnenıch vo vıstupnej tabu¾ke (to¾ko riadkov bude naplnenıch)
             usedColumns = Array(0, 1, 2, 3, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41)
-            rowCount = outputWs.Cells(Rows.Count, "T").End(xlUp).Row
+            copyStart = outputWs.Cells(Rows.Count, "D").End(xlUp).Row + 1
+            copyEnd = outputWs.Cells(Rows.Count, "T").End(xlUp).Row
         
-            ' Napåòanie popisnıch dát vo vıstupnej tabu¾ky od riadok = 1 do riadok = rowCount
-            For rowStep = 2 To rowCount
+            ' Napåòanie popisnıch dát vo vıstupnej tabu¾ky od riadok = copyStart do riadok = copyEnd
+            For rowStep = copyStart To copyEnd
                 For i = 1 To 32
                     outputWs.Cells(rowStep, usedColumns(i)).Value = parameterFix(i)
                 Next i
@@ -248,12 +217,13 @@ Dim rowCount As Integer
             
         Case NA_REG
             ' Inicializácia premennıch - usedColumns = do ktorıch ståpcov vıstupnej tabu¾ky sa majú napåòa dáta
-            '                            rowCount = spoèíta ko¾ko riadkov je vyplnenıch vo vıstupnej tabu¾ke (to¾ko riadkov bude naplnenıch)
+            '                            copyEnd = spoèíta ko¾ko riadkov je vyplnenıch vo vıstupnej tabu¾ke (to¾ko riadkov bude naplnenıch)
             usedColumns = Array(0, 1, 3, 4, 5, 13, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 28, 29)
-            rowCount = outputWs.Cells(Rows.Count, "N").End(xlUp).Row
+            copyStart = outputWs.Cells(Rows.Count, "B").End(xlUp).Row + 1
+            copyEnd = outputWs.Cells(Rows.Count, "N").End(xlUp).Row
             
-            ' Napåòanie popisnıch dát vo vıstupnej tabu¾ky od riadok = 1 do riadok = rowCount
-            For rowStep = 2 To rowCount
+            ' Napåòanie popisnıch dát vo vıstupnej tabu¾ky od riadok = copyStart do riadok = copyEnd
+            For rowStep = copyStart To copyEnd
                 For i = 1 To 17
                     outputWs.Cells(rowStep, usedColumns(i)).Value = parameterFix(i)
                 Next i
@@ -261,12 +231,13 @@ Dim rowCount As Integer
             
         Case NA_PENS
             ' Inicializácia premennıch - usedColumns = do ktorıch ståpcov vıstupnej tabu¾ky sa majú napåòa dáta
-            '                            rowCount = spoèíta ko¾ko riadkov je vyplnenıch vo vıstupnej tabu¾ke (to¾ko riadkov bude naplnenıch)
+            '                            copyEnd = spoèíta ko¾ko riadkov je vyplnenıch vo vıstupnej tabu¾ke (to¾ko riadkov bude naplnenıch)
             usedColumns = Array(0, 1, 2, 5, 6, 10, 11, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31)
-            rowCount = outputWs.Cells(Rows.Count, "L").End(xlUp).Row
+            copyStart = outputWs.Cells(Rows.Count, "C").End(xlUp).Row + 1
+            copyEnd = outputWs.Cells(Rows.Count, "L").End(xlUp).Row
             
-            ' Napåòanie popisnıch dát vo vıstupnej tabu¾ky od riadok = 1 do riadok = rowCount
-            For rowStep = 2 To rowCount
+            ' Napåòanie popisnıch dát vo vıstupnej tabu¾ky od riadok = copyStart do riadok = copyEnd
+            For rowStep = copyStart To copyEnd
                 For i = 1 To 23
                     outputWs.Cells(rowStep, usedColumns(i)).Value = parameterFix(i)
                 Next i
@@ -274,25 +245,19 @@ Dim rowCount As Integer
             
         Case NA_MAIN
             ' Inicializácia premennıch - usedColumns = do ktorıch ståpcov vıstupnej tabu¾ky sa majú napåòa dáta
-            '                            rowCount = spoèíta ko¾ko riadkov je vyplnenıch vo vıstupnej tabu¾ke (to¾ko riadkov bude naplnenıch)
+            '                            copyEnd = spoèíta ko¾ko riadkov je vyplnenıch vo vıstupnej tabu¾ke (to¾ko riadkov bude naplnenıch)
             usedColumns = Array(0, 1, 2, 3, 6, 13, 14, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36)
-            rowCount = outputWs.Cells(Rows.Count, "P").End(xlUp).Row
+            copyStart = outputWs.Cells(Rows.Count, "C").End(xlUp).Row + 1
+            copyEnd = outputWs.Cells(Rows.Count, "P").End(xlUp).Row
             
-            ' Napåòanie popisnıch dát vo vıstupnej tabu¾ky od riadok = 1 do riadok = rowCount
-            For rowStep = 2 To rowCount
+            ' Napåòanie popisnıch dát vo vıstupnej tabu¾ky od riadok = copyStart do riadok = copyEnd
+            For rowStep = copyStart To copyEnd
                 For i = 1 To 23
                     outputWs.Cells(rowStep, usedColumns(i)).Value = parameterFix(i)
                 Next i
             Next rowStep
         
     End Select
-    
-    On Error GoTo 0
-    Exit Sub
-    
-errHandler:
-
-    errorHandler (SUB_NAME)
 
 End Sub
 
@@ -311,9 +276,6 @@ Dim endRangeInstrument As String
 Dim startRangeBalance As String
 Dim endRangeBalance As String
 Dim typeFlag As String
-
-    ' Spustenie "ErrHandler" ak sa vyskytne chyba
-    On Error GoTo errHandler
 
     Select Case conversionType
         Case NA_SEC
@@ -364,13 +326,6 @@ Dim typeFlag As String
                 Call MAINdataConversion(startRange, endRange)
                 
     End Select
-    
-    On Error GoTo 0
-    Exit Sub
-    
-errHandler:
-
-    errorHandler (SUB_NAME)
 
 End Sub
 
@@ -509,7 +464,7 @@ Dim confSubString As String
     
 errHandler:
 
-    errorHandler (SUB_NAME)
+    Call errorHandler(SUB_NAME, worksheetName)
 
 End Sub
 
@@ -623,7 +578,7 @@ Dim boolString As String
     
 errHandler:
 
-    errorHandler (SUB_NAME)
+    Call errorHandler(SUB_NAME, worksheetName)
 
 End Sub
 
@@ -734,7 +689,7 @@ Dim boolString As String
     
 errHandler:
 
-    errorHandler (SUB_NAME)
+    Call errorHandler(SUB_NAME, worksheetName)
 
 End Sub
 
@@ -860,9 +815,7 @@ Dim boolString As String
     
 errHandler:
 
-    errorHandler (SUB_NAME)
+    Call errorHandler(SUB_NAME, worksheetName)
+    Exit Sub
 
 End Sub
-
-
-
