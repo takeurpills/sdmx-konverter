@@ -26,7 +26,7 @@ Option Explicit
 
 Private Sub UserForm_Initialize()
 
-    progressForm.BackColor = RGB(204, 236, 255)
+    Me.BackColor = RGB(204, 236, 255)
     infoImage.BackColor = RGB(204, 236, 255)
     infoLab.BackColor = RGB(204, 236, 255)
 

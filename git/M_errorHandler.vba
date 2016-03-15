@@ -1,4 +1,4 @@
-Attribute VB_Name = "errorModule"
+Attribute VB_Name = "M_errorHandler"
 Option Explicit
 
 Const ERR_SOURCEFILE = "openSourceFile"
@@ -18,7 +18,7 @@ Dim errText As String
         Case ERR_SECDATA, ERR_REGDATA, ERR_PENSDATA, ERR_MAINDATA
             errText = "Zvolený hárok - """ & miscInfo & """ nemá správny formát alebo bol zvolený nesprávny typ konverzie!" & vbNewLine & vbNewLine
             errText = errText & "Konverzia hárku sa nevykoná!"
-            incrementConversions (C_FAIL)
+            PBL_conversionFail = incrementConversions(PBL_FAIL)
         End Select
                        
     MsgBox errText, vbCritical, "Kritická chyba"

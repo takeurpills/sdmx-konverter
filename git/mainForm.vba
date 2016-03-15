@@ -28,7 +28,7 @@ Dim i As Integer
 
 Private Sub UserForm_Initialize()
     
-    Application.Visible = True
+    Application.WindowState = xlMinimized
     
     lbLeft.MultiSelect = 2
     lbRight.MultiSelect = 2
@@ -67,13 +67,13 @@ Private Sub UserForm_Initialize()
     cbBrowseFile.Font.Bold = True
     cbRun.Font.Bold = True
     
-    labVersion.Caption = versionId
+    labVersion.Caption = PBL_programVersion
         
 End Sub
 
 Private Sub UserForm_Terminate()
 
-    appClose
+    Call appClose
 
 End Sub
 
@@ -171,11 +171,11 @@ Dim errorMsg As String
 conversionType = 0
 myCount = 0
 
-If optSEC = True Then conversionType = NA_SEC
-If optREG = True Then conversionType = NA_REG
-If optPENS = True Then conversionType = NA_PENS
-If optMAIN = True Then conversionType = NA_MAIN
-If optSU = True Then conversionType = NA_SU
+If optSEC = True Then conversionType = PBL_SEC
+If optREG = True Then conversionType = PBL_REG
+If optPENS = True Then conversionType = PBL_PENS
+If optMAIN = True Then conversionType = PBL_MAIN
+If optSU = True Then conversionType = PBL_SU
 
 If conversionType > 0 Then
 
@@ -183,15 +183,15 @@ If conversionType > 0 Then
         lbRight.Selected(i) = True
     Next i
     
-    Erase inputWsId()
+    Erase PBL_inputWsId()
     myCount = lbRight.ListCount
     
     j = 1
     
     For i = 1 To myCount
         If lbRight.Selected(i - 1) Then
-            ReDim Preserve inputWsId(1 To j)
-            inputWsId(j) = lbRight.List(i - 1, 0)
+            ReDim Preserve PBL_inputWsId(1 To j)
+            PBL_inputWsId(j) = lbRight.List(i - 1, 0)
             j = j + 1
         End If
     Next
