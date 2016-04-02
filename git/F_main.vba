@@ -1,24 +1,26 @@
 VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} mainForm 
-   Caption         =   "Konvertor"
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} F_main 
+   Caption         =   "SDMX Konvertor"
    ClientHeight    =   8685
    ClientLeft      =   45
    ClientTop       =   375
    ClientWidth     =   10590
-   OleObjectBlob   =   "mainForm.frx":0000
+   OleObjectBlob   =   "F_main.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
-Attribute VB_Name = "mainForm"
+Attribute VB_Name = "F_main"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 '                                                                                       '
-'  Názov:  Konvertor ESA2010                                                            '
+'  Názov:  SDMX Konvertor ESA2010                                                       '
 '  Autor:  Martin Tóth - Štatistický úrad SR                                            '
 '                                                                                       '
-'  Popis:                                                                               '
+'  Popis:  Aplikácia slúži na konverziu pracovných výstupných tabuliek národných úètov  '
+'          vo formáte excel do tabuliek v zmysle SDMX štandardu (pod¾a definovaných     '
+'          doménových databázových štruktúr) v csv formáte                              '
 '                                                                                       '
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
@@ -28,6 +30,7 @@ Dim i As Integer
 
 Private Sub UserForm_Initialize()
     
+    Application.WindowState = xlMaximized
     Application.WindowState = xlMinimized
     
     lbLeft.MultiSelect = 2
@@ -73,13 +76,13 @@ End Sub
 
 Private Sub UserForm_Terminate()
 
-    Call appClose
+    Call AppClose
 
 End Sub
 
 Private Sub cbBrowseFile_Click()
 
-    Call openSourceFile
+    Call OpenSourceFile
     
 End Sub
 
@@ -196,7 +199,7 @@ If conversionType > 0 Then
         End If
     Next
     
-    Call mainSub(conversionType)
+    Call MainSub(conversionType)
 
 Else
     errorMsg = "Nie je zvolený typ výstupnej tabu¾ky!"

@@ -1,31 +1,25 @@
 Attribute VB_Name = "M_main"
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-'                                                                                       '
-'  Názov:  Konvertor ESA2010                                                            '
-'  Autor:  Martin Tóth - Štatistický úrad SR                                            '
-'                                                                                       '
-'  Popis:                                                                               '
-'                                                                                       '
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Option Explicit
 
 '----------------------------------------------
 ' Inicializaèná procedúra pri spustení programu
 '----------------------------------------------
-Sub programInit()
+Sub ProgramInit()
     
     PBL_programVersion = "v0.4"
     PBL_programName = ActiveWorkbook.FullName
     
-    mainForm.Show vbModeless
+    F_main.Show vbModeless
     
 End Sub
     
 '------------------------------------
 ' Hlavná riadiaca procedúra konverzie
 '------------------------------------
-Sub mainSub(conversionType As Integer)
+Sub MainSub(conversionType As Integer)
+    
+Const SUB_NAME = "mainSub"
     
 Dim i As Integer
 Dim saveName As String
@@ -50,10 +44,12 @@ Dim errorIndi As Integer
             MsgBox errorMsg, vbExclamation, "Informatívna chyba"
         Else
             Set PBL_xlNew = CreateObject("Excel.Application")
-            PBL_xlNew.ScreenUpdating = False
 
             PBL_xlNew.Workbooks.Add (1)
             Set PBL_outputWs = PBL_xlNew.Workbooks(1).Worksheets(1)
+            
+            PBL_xlNew.ScreenUpdating = False
+            PBL_xlNew.Calculation = xlCalculationManual
 
             For i = 1 To UBound(PBL_inputWsId)
 
@@ -65,11 +61,11 @@ Dim errorIndi As Integer
 
                 Select Case conversionType
                     Case PBL_SEC
-                        If PBL_inputWs.Cells(1, 1).Value = "FREQ" And PBL_inputWs.Cells(6, 1).Value = "EXPENDITURE" Then
+                        If PBL_inputWs.Cells(1, 1).Value = "FREQ" And PBL_inputWs.Cells(6, 1).Value = "SEC" Then
                         conversionCheck = True
                         End If
                     Case PBL_REG
-                        If PBL_inputWs.Cells(1, 10).Value = "REG" Then
+                        If PBL_inputWs.Cells(11, 1).Value = "REF_SECTOR" And PBL_inputWs.Cells(1, 6).Value = "REG" Then
                         conversionCheck = True
                         End If
                     Case PBL_PENS
@@ -86,27 +82,23 @@ Dim errorIndi As Integer
 
                     ' Spúštanie procedúr
                     If progIndicator = 0 Then
-                        mainForm.Hide
-                        progressForm.Show vbModeless
+                        F_main.Hide
+                        F_progress.Show vbModeless
                         progIndicator = 1
                     End If
 
                     errorIndi = PBL_conversionFail
 
-                    Call arrayPush(conversionType)
-                    Call defineConversion(conversionType)
+                    Call ArrayPush(conversionType)
+                    Call DefineConversion(conversionType)
 
                     If errorIndi = PBL_conversionFail Then
-                        Call arrayFill(conversionType)
-                        PBL_conversionOk = incrementConversions(PBL_OK)
+                        Call ArrayFill(conversionType)
+                        PBL_conversionOk = IncrementConversions(PBL_OK)
                     End If
 
                 Else
-                    errorMsg = "Zvolený hárok - """ & PBL_worksheetName & """ nemá správny formát alebo bol zvolený nesprávny typ konverzie!" & vbNewLine & vbNewLine
-                    errorMsg = errorMsg & "Konverzia hárku sa nevykoná!"
-                    MsgBox errorMsg, vbCritical, "Kritická chyba"
-
-                    PBL_conversionFail = incrementConversions(PBL_FAIL)
+                    Call errorHandler(SUB_NAME, PBL_worksheetName)
                 End If
 
             Next i
@@ -120,11 +112,12 @@ Dim errorIndi As Integer
                 PBL_xlNew.Workbooks(1).SaveAs fileName:=saveName, FileFormat:=xlCSV, local:=True
             End If
             
+            PBL_xlNew.Calculation = xlCalculationAutomatic
             PBL_xlNew.ScreenUpdating = True
             PBL_xlNew.Workbooks(1).Close False
             PBL_xlNew.Quit
             
-            Call unloadForms
+            Call UnloadForms
              
             PBL_xlApp.Quit
             
@@ -153,7 +146,7 @@ End Sub
 '---------------------------
 'Procedúra vypnutia programu
 '---------------------------
-Sub appClose()
+Sub AppClose()
 
     Set PBL_xlOld = GetObject(PBL_programName).Application
     

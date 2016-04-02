@@ -1,13 +1,16 @@
 Attribute VB_Name = "M_functions"
 Option Explicit
 
-Function incrementConversions(successType)
+'----------------------------------------------
+'Funkcia na inkrementovanie pocitadla konverzii
+'----------------------------------------------
+Function IncrementConversions(successType As String)
 
     Select Case successType
         Case PBL_OK
-            incrementConversions = PBL_conversionOk + 1
+            IncrementConversions = PBL_conversionOk + 1
         Case PBL_FAIL
-            incrementConversions = PBL_conversionFail + 1
+            IncrementConversions = PBL_conversionFail + 1
         End Select
         
 End Function
