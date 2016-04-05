@@ -8,9 +8,9 @@ Private Const ERR_PENSDATA = "PENSdataConversion"
 Private Const ERR_MAINDATA = "MAINdataConversion"
 Private Const ERR_MAIN = "mainSub"
 
-'------------------------------------------
-'Procedura na centralizovany error-handling
-'------------------------------------------
+'-----------------------------
+'Centralizovany error-handling
+'-----------------------------
 Sub errorHandler(errProcedure As String, Optional miscInfo As String)
 
 Dim errText As String

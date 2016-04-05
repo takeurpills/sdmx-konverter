@@ -13,29 +13,18 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-'                                                                                       '
-'  Názov:  SDMX Konvertor ESA2010                                                       '
-'  Autor:  Martin Tóth - Štatistický úrad SR                                            '
-'                                                                                       '
-'  Popis:  Aplikácia slúži na konverziu pracovných výstupných tabuliek národných úètov  '
-'          vo formáte excel do tabuliek v zmysle SDMX štandardu (pod¾a definovaných     '
-'          doménových databázových štruktúr) v csv formáte                              '
-'                                                                                       '
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
 Option Explicit
 
-Dim i As Integer
-
+'-------------------------
+'Hlavny userform aplikacie
+'-------------------------
 Private Sub UserForm_Initialize()
-    
+        
+'Minimalizuje instanciu vo fullscreen mode
     Application.WindowState = xlMaximized
     Application.WindowState = xlMinimized
     
-    lbLeft.MultiSelect = 2
-    lbRight.MultiSelect = 2
-    
+'Nastavenie farieb elementov userformu
     Me.BackColor = RGB(204, 236, 255)
     chbLeft.BackColor = RGB(204, 236, 255)
     chbRight.BackColor = RGB(204, 236, 255)
@@ -52,6 +41,7 @@ Private Sub UserForm_Initialize()
     optSEC.BackColor = RGB(204, 236, 255)
     optSU.BackColor = RGB(204, 236, 255)
     
+'Nastavenie velkosti a formatu pismen elementov
     labConversionType.Font.Size = 9
     labIdLeft.Font.Size = 10
     labIdRight.Font.Size = 10
@@ -70,24 +60,38 @@ Private Sub UserForm_Initialize()
     cbBrowseFile.Font.Bold = True
     cbRun.Font.Bold = True
     
+'Dotiahne informaciu o aktualnej verzii do UF
     labVersion.Caption = PBL_programVersion
+    
+'Umozni viacnasobny vyber prvkov z listboxov
+    lbLeft.MultiSelect = 2
+    lbRight.MultiSelect = 2
         
 End Sub
 
+
 Private Sub UserForm_Terminate()
 
+'Vypne aplikaciu
     Call AppClose
 
 End Sub
 
+
 Private Sub cbBrowseFile_Click()
 
+'Vyber vstupneho suboru cez OpenFile dialogove okno
     Call OpenSourceFile
     
 End Sub
 
+
+'----------------------------------------
+'Pridanie prvkov do zoznamu pre konverziu
+'----------------------------------------
 Private Sub cbAdd_Click()
 
+Dim i As Integer
 Dim thisListBox As Object
 Dim counter As Integer
 
@@ -104,13 +108,19 @@ Dim counter As Integer
     
     chbLeft.Value = False
     
+'Zoradenie prvkov podla ID
     Set thisListBox = Me.lbRight
     Call lbSort(thisListBox)
 
 End Sub
 
+
+'-----------------------------------------
+'Odobratie prvkov zo zoznamu pre konverziu
+'-----------------------------------------
 Private Sub cbRemove_Click()
 
+Dim i As Integer
 Dim thisListBox As Object
 Dim counter As Integer
 
@@ -127,90 +137,22 @@ Dim counter As Integer
     
     chbRight.Value = False
     
+'Zoradenie prvkov podla ID
     Set thisListBox = Me.lbLeft
     Call lbSort(thisListBox)
 
 End Sub
 
-Private Sub chbLeft_Click()
 
-    If chbLeft.Value = True Then
-        For i = 0 To lbLeft.ListCount - 1
-            lbLeft.Selected(i) = True
-        Next i
-    End If
-    
-    If chbLeft.Value = False Then
-        For i = 0 To lbLeft.ListCount - 1
-            lbLeft.Selected(i) = False
-        Next i
-    End If
-
-End Sub
-
-Private Sub chbRight_Click()
-
-    If chbRight.Value = True Then
-        For i = 0 To lbRight.ListCount - 1
-            lbRight.Selected(i) = True
-        Next i
-    End If
-    
-    If chbRight.Value = False Then
-        For i = 0 To lbRight.ListCount - 1
-            lbRight.Selected(i) = False
-        Next i
-    End If
-
-End Sub
-
-Private Sub cbRun_Click()
-
-Dim j As Integer
-Dim myCount As Integer
-Dim conversionType As Integer
-Dim errorMsg As String
-
-conversionType = 0
-myCount = 0
-
-If optSEC = True Then conversionType = PBL_SEC
-If optREG = True Then conversionType = PBL_REG
-If optPENS = True Then conversionType = PBL_PENS
-If optMAIN = True Then conversionType = PBL_MAIN
-If optSU = True Then conversionType = PBL_SU
-
-If conversionType > 0 Then
-
-    For i = 0 To lbRight.ListCount - 1
-        lbRight.Selected(i) = True
-    Next i
-    
-    Erase PBL_inputWsId()
-    myCount = lbRight.ListCount
-    
-    j = 1
-    
-    For i = 1 To myCount
-        If lbRight.Selected(i - 1) Then
-            ReDim Preserve PBL_inputWsId(1 To j)
-            PBL_inputWsId(j) = lbRight.List(i - 1, 0)
-            j = j + 1
-        End If
-    Next
-    
-    Call MainSub(conversionType)
-
-Else
-    errorMsg = "Nie je zvolený typ výstupnej tabu¾ky!"
-    MsgBox errorMsg, vbExclamation, "Informatívna chyba"
-End If
-
-End Sub
-
+'------------------------------------------------------------------
+'Sort prvkov v listboxe podla ich ID (pricom ID = poradie v zosite)
+'------------------------------------------------------------------
 Sub lbSort(lbArgument As Object)
 
-Dim i As Long, j As Long, x As Long, temp As String
+Dim i As Long
+Dim j As Long
+Dim x As Long
+Dim temp As String
     
     With lbArgument
         For j = LBound(.List) To UBound(.List) - 1 Step 1
@@ -228,3 +170,97 @@ Dim i As Long, j As Long, x As Long, temp As String
 
 End Sub
 
+
+'---------------------------------------------
+'Oznacenie/odznacenie kazdeho prvku v listboxe
+'---------------------------------------------
+Private Sub chbLeft_Click()
+
+Dim i As Integer
+
+    If chbLeft.Value = True Then
+        For i = 0 To lbLeft.ListCount - 1
+            lbLeft.Selected(i) = True
+        Next i
+    End If
+    
+    If chbLeft.Value = False Then
+        For i = 0 To lbLeft.ListCount - 1
+            lbLeft.Selected(i) = False
+        Next i
+    End If
+
+End Sub
+
+
+'---------------------------------------------
+'Oznacenie/odznacenie kazdeho prvku v listboxe
+'---------------------------------------------
+Private Sub chbRight_Click()
+
+Dim i As Integer
+
+    If chbRight.Value = True Then
+        For i = 0 To lbRight.ListCount - 1
+            lbRight.Selected(i) = True
+        Next i
+    End If
+    
+    If chbRight.Value = False Then
+        For i = 0 To lbRight.ListCount - 1
+            lbRight.Selected(i) = False
+        Next i
+    End If
+
+End Sub
+
+
+'-------------------
+'Spustenie konverzie
+'-------------------
+Private Sub cbRun_Click()
+
+Dim i As Integer
+Dim j As Integer
+Dim counter As Integer
+Dim conversionType As Integer
+Dim infoMsg As String
+
+    conversionType = 0
+    counter = 0
+
+'Overenie typu konverzie (typ template)
+    If optSEC = True Then conversionType = PBL_SEC
+    If optREG = True Then conversionType = PBL_REG
+    If optPENS = True Then conversionType = PBL_PENS
+    If optMAIN = True Then conversionType = PBL_MAIN
+    If optSU = True Then conversionType = PBL_SU
+    
+    If conversionType > 0 Then
+        For i = 0 To lbRight.ListCount - 1
+            lbRight.Selected(i) = True
+        Next i
+        
+        Erase PBL_inputWsId()
+        counter = lbRight.ListCount
+        
+        j = 1
+        
+'Push ID harkov ktore sa maju konvertovat do pola
+        For i = 1 To counter
+            If lbRight.Selected(i - 1) Then
+                ReDim Preserve PBL_inputWsId(1 To j)
+                PBL_inputWsId(j) = lbRight.List(i - 1, 0)
+                j = j + 1
+            End If
+        Next
+        
+'Hlavna riadiaca procedura konverzie
+        Call MainSub(conversionType)
+        
+    Else
+        infoMsg = "Nie je zvolený typ výstupnej tabu¾ky!"
+        MsgBox infoMsg, vbExclamation, "Informatívna chyba"
+    End If
+
+End Sub

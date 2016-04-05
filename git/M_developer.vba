@@ -8,9 +8,9 @@ Private Const VBEXT_CT_DOCUMENT = 100
 Private Const VBEXT_CT_MSFORM = 3
 Private Const VBEXT_CT_STDMODULE = 1
 
-'--------------------------------------------------------
-'Procedura na export zdrojoveho kodu modulov a formularov
-'--------------------------------------------------------
+'-------------------------------------------
+'Export zdrojoveho kodu modulov a formularov
+'-------------------------------------------
 Sub SaveSourceCode()
 
 Dim i As Integer
@@ -20,7 +20,7 @@ Dim saveFolder As String
     saveFolder = "\git\"
     
     With ThisWorkbook.VBProject
-        For i = .VBComponents.Count To 1 Step -1
+        For i = .VBComponents.count To 1 Step -1
             If .VBComponents(i).Type <> VBEXT_CT_DOCUMENT Then
                 If .VBComponents(i).CodeModule.CountOfLines > 0 Then
                     moduleName = .VBComponents(i).CodeModule.name
@@ -32,9 +32,9 @@ Dim saveFolder As String
 
 End Sub
 
-'-------------------------------------------------
-'Procedura na ulozenie kopie suboru pre testovanie
-'-------------------------------------------------
+'------------------------------------
+'Ulozenie kopie suboru pre testovanie
+'------------------------------------
 Sub SaveTestVersion()
 
 Dim wbName As String

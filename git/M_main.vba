@@ -7,7 +7,7 @@ Option Explicit
 '----------------------------------------------
 Sub ProgramInit()
     
-    PBL_programVersion = "v0.4"
+    PBL_programVersion = "v0.5"
     PBL_programName = ActiveWorkbook.FullName
     
     F_main.Show vbModeless
@@ -152,7 +152,7 @@ Sub AppClose()
     
     PBL_xlOld.Visible = True
 
-    If PBL_xlOld.Workbooks.Count = 1 Then
+    If PBL_xlOld.Workbooks.count = 1 Then
         PBL_xlOld.ThisWorkbook.Saved = True
         If PBL_xlApp Is Nothing Then
         Else
@@ -165,7 +165,7 @@ Sub AppClose()
             Set PBL_xlNew = Nothing
         End If
         PBL_xlOld.Quit
-    ElseIf PBL_xlOld.Workbooks.Count > 1 Then
+    ElseIf PBL_xlOld.Workbooks.count > 1 Then
         PBL_xlOld.ThisWorkbook.Saved = True
         PBL_xlOld.Visible = True
          If PBL_xlApp Is Nothing Then

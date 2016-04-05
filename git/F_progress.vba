@@ -13,19 +13,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-'                                                                                       '
-'  Názov:  SDMX Konvertor ESA2010                                                       '
-'  Autor:  Martin Tóth - Štatistický úrad SR                                            '
-'                                                                                       '
-'  Popis:  Aplikácia slúži na konverziu pracovných výstupných tabuliek národných úètov  '
-'          vo formáte excel do tabuliek v zmysle SDMX štandardu (pod¾a definovaných     '
-'          doménových databázových štruktúr) v csv formáte                              '
-'                                                                                       '
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
 Option Explicit
 
+'------------------------------------------
+'Formular indikujuci prebiehajucu konverziu
+'------------------------------------------
 Private Sub UserForm_Initialize()
 
     Me.BackColor = RGB(204, 236, 255)

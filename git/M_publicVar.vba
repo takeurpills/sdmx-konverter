@@ -33,3 +33,4 @@ Public PBL_inputWb As Workbook
 Public PBL_parameterFix() As Variant
 Public PBL_fileToOpen As Variant
 
+Public PBL_copyStart As Integer
