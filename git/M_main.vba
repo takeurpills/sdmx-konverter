@@ -1,9 +1,8 @@
 Attribute VB_Name = "M_main"
-
 Option Explicit
 
 '----------------------------------------------
-' Inicializaèná procedúra pri spustení programu
+'Inicializacna procedura pri spusteni programu
 '----------------------------------------------
 Sub ProgramInit()
     
@@ -15,33 +14,39 @@ Sub ProgramInit()
 End Sub
     
 '------------------------------------
-' Hlavná riadiaca procedúra konverzie
+'Hlavna riadiaca procedura konverzie
 '------------------------------------
 Sub MainSub(conversionType As Integer)
     
 Const SUB_NAME = "mainSub"
     
 Dim i As Integer
+Dim successCounter As Integer
+Dim failCounter As Integer
 Dim saveName As String
 Dim folderPath As String
 Dim timeStamp As String
 Dim typeString As String
 Dim outputFile As String
-Dim errorMsg As String
+Dim infoMsg As String
 Dim successMsg As String
 Dim workbookName As String
 Dim conversionCheck As Boolean
 Dim progIndicator As Integer
 Dim errorIndi As Integer
+Dim checkedInputWsId() As Integer
+Dim failInputWs() As String
+Dim startVal As Range, endVal As Range
 
     progIndicator = 0
     PBL_conversionOk = 0
     PBL_conversionFail = 0
 
+'Kontrola ci bol zvoleny vstupny subor a ci je aspon jeden harok zvoleny na konverziu
     If PBL_fileToOpen <> False Then
         If (Not PBL_inputWsId) = True Then
-            errorMsg = "Nie sú zvolené pracovné hárky pre konverziu!"
-            MsgBox errorMsg, vbExclamation, "Informatívna chyba"
+            infoMsg = "Nie sú zvolené pracovné hárky pre konverziu!"
+            MsgBox infoMsg, vbExclamation, "Informatívna chyba"
         Else
             Set PBL_xlNew = CreateObject("Excel.Application")
 
@@ -51,59 +56,96 @@ Dim errorIndi As Integer
             PBL_xlNew.ScreenUpdating = False
             PBL_xlNew.Calculation = xlCalculationManual
 
-            For i = 1 To UBound(PBL_inputWsId)
+            successCounter = 1
+            failCounter = 1
 
+'Cyklus na test spravnosti formatu vybranych harkov
+            For i = 1 To UBound(PBL_inputWsId)
+            
                 conversionCheck = False
 
                 Set PBL_inputWs = PBL_inputWb.Worksheets(PBL_inputWsId(i))
-                workbookName = Left(PBL_inputWb.name, (InStrRev(PBL_inputWb.name, ".", -1, vbTextCompare) - 1))
                 PBL_worksheetName = PBL_inputWs.name
 
                 Select Case conversionType
                     Case PBL_SEC
-                        If PBL_inputWs.Cells(1, 1).Value = "FREQ" And PBL_inputWs.Cells(6, 1).Value = "SEC" Then
-                        conversionCheck = True
+                        If PBL_inputWs.Cells(1, 1).Value = "FREQ" And PBL_inputWs.Cells(6, 1).Value = "SEC" _
+                        And cellValueRefTest(startVal, endVal) = True Then
+                            conversionCheck = True
                         End If
                     Case PBL_REG
-                        If PBL_inputWs.Cells(11, 1).Value = "REF_SECTOR" And PBL_inputWs.Cells(1, 6).Value = "REG" Then
-                        conversionCheck = True
+                        Set startVal = PBL_inputWs.Range("F2")
+                        Set endVal = PBL_inputWs.Range("F3")
+                        If PBL_inputWs.Cells(11, 1).Value = "REF_SECTOR" And PBL_inputWs.Cells(1, 6).Value = "REG" _
+                        And cellValueRefTest(startVal, endVal) = True Then
+                            conversionCheck = True
                         End If
                     Case PBL_PENS
-                        If PBL_inputWs.Cells(12, 1).Value = "UNIT_MULT" And PBL_inputWs.Cells(1, 6).Value = "PENS" Then
-                        conversionCheck = True
+                        Set startVal = PBL_inputWs.Range("F2")
+                        Set endVal = PBL_inputWs.Range("F3")
+                        If PBL_inputWs.Cells(12, 1).Value = "UNIT_MULT" And PBL_inputWs.Cells(1, 6).Value = "PENS" _
+                        And cellValueRefTest(startVal, endVal) = True Then
+                            conversionCheck = True
                         End If
                     Case PBL_MAIN
-                        If PBL_inputWs.Cells(12, 1).Value = "TIME_PER_COLLECT" And PBL_inputWs.Cells(1, 6).Value = "MAIN" Then
-                        conversionCheck = True
+                        Set startVal = PBL_inputWs.Range("F2")
+                        Set endVal = PBL_inputWs.Range("F3")
+                        If PBL_inputWs.Cells(12, 1).Value = "TIME_PER_COLLECT" And PBL_inputWs.Cells(1, 6).Value = "MAIN" _
+                        And cellValueRefTest(startVal, endVal) = True Then
+                            conversionCheck = True
                         End If
                 End Select
 
                 If conversionCheck = True Then
+                    ReDim Preserve checkedInputWsId(successCounter)
+                    checkedInputWsId(successCounter) = PBL_inputWsId(i)
+        
+                    successCounter = successCounter + 1
+                Else
+                    ReDim Preserve failInputWs(failCounter)
+                    failInputWs(failCounter) = PBL_worksheetName
+                    
+                    failCounter = failCounter + 1
+                    PBL_conversionFail = IncrementConversions(PBL_FAIL)
+                End If
+            Next i
+            
+            If failCounter > 1 Then
+                infoMsg = "Niektoré hárky nemajú správny formát pre zvolený typ konverzie:" & vbNewLine
+                For i = 1 To UBound(failInputWs)
+                    infoMsg = infoMsg & "   " & Chr(149) & failInputWs(i) & vbNewLine
+                Next i
+                infoMsg = infoMsg & vbNewLine & "Konverzia týchto hárkov sa nevykoná!"
+                MsgBox infoMsg, vbExclamation, "Informatívna chyba"
+            End If
+            
+            If successCounter > 1 Then
+                For i = 1 To UBound(checkedInputWsId)
+                
+                Set PBL_inputWs = PBL_inputWb.Worksheets(checkedInputWsId(i))
+                workbookName = Left(PBL_inputWb.name, (InStrRev(PBL_inputWb.name, ".", -1, vbTextCompare) - 1))
+                PBL_worksheetName = PBL_inputWs.name
 
-                    ' Spúštanie procedúr
+'Spustanie procedur konverzie
                     If progIndicator = 0 Then
                         F_main.Hide
                         F_progress.Show vbModeless
                         progIndicator = 1
                     End If
-
+        
                     errorIndi = PBL_conversionFail
-
+        
                     Call ArrayPush(conversionType)
                     Call DefineConversion(conversionType)
-
+        
                     If errorIndi = PBL_conversionFail Then
                         Call ArrayFill(conversionType)
                         PBL_conversionOk = IncrementConversions(PBL_OK)
                     End If
+                Next i
+            End If
 
-                Else
-                    Call errorHandler(SUB_NAME, PBL_worksheetName)
-                End If
-
-            Next i
-                
-            ' Uloženie výstupu
+'Ulozenie vystupu a object-cleanup
             If PBL_conversionOk > 0 Then
                 folderPath = PBL_xlApp.ActiveWorkbook.Path
                 timeStamp = Format(CStr(Now), "yyyy_mm_dd_hhmmss")
@@ -132,19 +174,18 @@ Dim errorIndi As Integer
             successMsg = successMsg & "• Poèet neúspešných konverzií: " & PBL_conversionFail
             
             MsgBox successMsg, vbInformation, "Informácia"
-
         End If
         
     Else
-        errorMsg = "Nie je zvolený súbor pre konverziu!"
-        MsgBox errorMsg, vbExclamation, "Informatívna chyba"
+        infoMsg = "Nie je zvolený súbor pre konverziu!"
+        MsgBox infoMsg, vbExclamation, "Informatívna chyba"
     End If
 
 End Sub
 
 
 '---------------------------
-'Procedúra vypnutia programu
+'Vypnutie programu
 '---------------------------
 Sub AppClose()
 

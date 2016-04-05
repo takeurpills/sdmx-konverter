@@ -1,7 +1,7 @@
 Attribute VB_Name = "M_publicVar"
 Option Explicit
 
-'Deklarácia globálnych premenných projektu
+'Deklaracia globalnych premennych projektu
 Public Const PBL_SEC = 1
 Public Const PBL_REG = 2
 Public Const PBL_PENS = 3

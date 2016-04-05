@@ -6,7 +6,6 @@ Private Const ERR_SECDATA = "SECdataConversion"
 Private Const ERR_REGDATA = "REGdataConversion"
 Private Const ERR_PENSDATA = "PENSdataConversion"
 Private Const ERR_MAINDATA = "MAINdataConversion"
-Private Const ERR_MAIN = "mainSub"
 
 '-----------------------------
 'Centralizovany error-handling
@@ -21,14 +20,8 @@ Dim errText As String
             
             Call UnloadForms
         Case ERR_SECDATA, ERR_REGDATA, ERR_PENSDATA, ERR_MAINDATA
-            errText = "Zvolený hárok - """ & miscInfo & """ nemá správny formát pre zvolený typ konverzie!" & vbNewLine & vbNewLine
-            errText = errText & "Konverzia hárku sa nevykoná!"
+            errText = "Vyskytla sa neoèakávaná chyba na hárku: """ & miscInfo & """. Prosím kontaktujte správcu aplikácie!"
             
-            PBL_conversionFail = IncrementConversions(PBL_FAIL)
-        Case ERR_MAIN
-            errText = "Zvolený hárok - """ & miscInfo & """ nemá správny formát pre zvolený typ konverzie!" & vbNewLine & vbNewLine
-            errText = errText & "Konverzia hárku sa nevykoná!"
-
             PBL_conversionFail = IncrementConversions(PBL_FAIL)
         End Select
                        
