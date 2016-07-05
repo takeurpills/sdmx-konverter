@@ -185,6 +185,24 @@ Dim paramValue As String
                 paramValue = PBL_inputWs.Cells(r, s)
                 PBL_parameterFix(x) = paramValue
             Next
+            
+        Case PBL_SU
+        
+'Nacitanie 13+12 = 25 hodnot
+            ReDim PBL_parameterFix(1 To 25)
+            
+            s = 2
+            For r = 1 To 13
+                paramValue = PBL_inputWs.Cells(r, s)
+                PBL_parameterFix(r) = paramValue
+            Next
+            
+            s = 4
+            For r = 1 To 12
+                x = r + 13
+                paramValue = PBL_inputWs.Cells(r, s)
+                PBL_parameterFix(x) = paramValue
+            Next
     End Select
 
 End Sub
@@ -209,7 +227,7 @@ Dim copyEnd As Integer
     
     Select Case conversionType
         Case PBL_SEC
-            usedColumns = Array(0, 1, 2, 3, 14, 15, 17, 18, 19, 24, 27, 28, 30, 31, 32, 34, 35, 36, 38, 39, 40, 41, 42, 43, 44)
+            usedColumns = Array(0, 1, 2, 3, 17, 27, 28, 30, 31, 32, 14, 18, 19, 15, 34, 35, 36, 38, 39, 40, 41, 42, 43, 44, 24)
             copyStart = PBL_copyStart
             copyEnd = PBL_outputWs.Cells(Rows.count, "U").End(xlUp).Row
             
@@ -220,7 +238,7 @@ Dim copyEnd As Integer
             Next PBL_rowStep
             
         Case PBL_REG
-            usedColumns = Array(0, 1, 3, 4, 5, 12, 13, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 28, 29, 30, 31, 32, 33)
+            usedColumns = Array(0, 1, 5, 12, 17, 18, 19, 20, 21, 22, 3, 4, 13, 23, 24, 25, 27, 28, 29, 30, 31, 32, 33)
             copyStart = PBL_copyStart
             copyEnd = PBL_outputWs.Cells(Rows.count, "N").End(xlUp).Row
             
@@ -231,7 +249,7 @@ Dim copyEnd As Integer
             Next PBL_rowStep
             
         Case PBL_PENS
-            usedColumns = Array(0, 1, 2, 5, 6, 10, 11, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31)
+            usedColumns = Array(0, 1, 2, 5, 15, 16, 17, 18, 19, 20, 11, 10, 24, 6, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31)
             copyStart = PBL_copyStart
             copyEnd = PBL_outputWs.Cells(Rows.count, "L").End(xlUp).Row
             
@@ -248,6 +266,17 @@ Dim copyEnd As Integer
             
             For PBL_rowStep = copyStart To copyEnd
                 For i = 1 To 23
+                    PBL_outputWs.Cells(PBL_rowStep, usedColumns(i)).Value = PBL_parameterFix(i)
+                Next i
+            Next PBL_rowStep
+            
+        Case PBL_SU
+            usedColumns = Array(0, 1, 2, 5, 14, 21, 22, 23, 24, 25, 26, 30, 12, 17, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 19, 20)
+            copyStart = PBL_copyStart
+            copyEnd = PBL_outputWs.Cells(Rows.count, "R").End(xlUp).Row
+            
+            For PBL_rowStep = copyStart To copyEnd
+                For i = 1 To 25
                     PBL_outputWs.Cells(PBL_rowStep, usedColumns(i)).Value = PBL_parameterFix(i)
                 Next i
             Next PBL_rowStep
@@ -307,6 +336,15 @@ Dim typeFlag As String
             endRange = endRangeInstrument
             
             Call MAINdataConversion(startRange, endRange)
+            
+        Case PBL_SU
+            startRangeInstrument = PBL_inputWs.Range("F2").Value
+            endRangeInstrument = PBL_inputWs.Range("F3").Value
+            
+            startRange = startRangeInstrument
+            endRange = endRangeInstrument
+            
+            Call SUdataConversion(startRange, endRange)
     End Select
 
 End Sub
@@ -384,7 +422,8 @@ Dim boolString As String
                         "TITLE", "UNIT_MULT", "LAST_UPDATE", "COMPILING_ORG", "COMMENT_DSET", _
                         "COMMENT_TS", "DATA_COMP", "CURRENCY", "DISS_ORG")
     columnNames = Array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", _
-                        "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR")
+                        "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", _
+                        "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR")
     For i = 0 To 43
         PBL_outputWs.Range(columnNames(i) & "1").Value = headerNames(i)
     Next i
@@ -681,8 +720,14 @@ Dim boolString As String
     leadingColEnd = leadingValueEnd.Column
     
 'Vyplnenie hlavicky vystupnej tabulky
-    headerNames = Array("FREQ", "REF_AREA", "COUNTERPART_AREA", "REF_SECTOR", "COUNTERPART_SECTOR", "ACCOUNTING_ENTRY", "STO", "INSTR_ASSET", "PENSION_FUNDTYPE", "UNIT_MEASURE", "TIME_PERIOD", "OBS_VALUE", "OBS_STATUS", "CONF_STATUS", "COMMENT_OBS", "PRE_BREAK_VALUE", "EMBARGO_DATE", "REF_PERIOD_DETAIL", "TIME_FORMAT", "TIME_PER_COLLECT", "DECIMALS", "TABLE_IDENTIFIER", "TITLE", "UNIT_MULT", "LAST_UPDATE", "COMPILING_ORG", "COMMENT_DSET", "COMMENT_TS", "DATA_COMP", "CURRENCY", "DISS_ORG")
-    columnNames = Array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE")
+    headerNames = Array("FREQ", "REF_AREA", "COUNTERPART_AREA", "REF_SECTOR", "COUNTERPART_SECTOR", "ACCOUNTING_ENTRY", _
+                        "STO", "INSTR_ASSET", "PENSION_FUNDTYPE", "UNIT_MEASURE", "TIME_PERIOD", "OBS_VALUE", _
+                        "OBS_STATUS", "CONF_STATUS", "COMMENT_OBS", "PRE_BREAK_VALUE", "EMBARGO_DATE", _
+                        "REF_PERIOD_DETAIL", "TIME_FORMAT", "TIME_PER_COLLECT", "DECIMALS", _
+                        "TABLE_IDENTIFIER", "TITLE", "UNIT_MULT", "LAST_UPDATE", "COMPILING_ORG", _
+                        "COMMENT_DSET", "COMMENT_TS", "DATA_COMP", "CURRENCY", "DISS_ORG")
+    columnNames = Array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", _
+                        "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE")
     For i = 0 To 30
         PBL_outputWs.Range(columnNames(i) & "1").Value = headerNames(i)
     Next i
@@ -808,8 +853,16 @@ Dim boolString As String
     leadingColEnd = leadingValueEnd.Column
     
 'Vyplnenie hlavicky vystupnej tabulky
-    headerNames = Array("FREQ", "ADJUSTMENT", "REF_AREA", "COUNTERPART_AREA", "REF_SECTOR", "COUNTERPART_SECTOR", "ACCOUNTING_ENTRY", "STO", "INSTR_ASSET", "ACTIVITY", "EXPENDITURE", "UNIT_MEASURE", "PRICES", "TRANSFORMATION", "TIME_PERIOD", "OBS_VALUE", "OBS_STATUS", "CONF_STATUS", "COMMENT_OBS", "PRE_BREAK_VALUE", "EMBARGO_DATE", "REF_PERIOD_DETAIL", "TIME_FORMAT", "TIME_PER_COLLECT", "REF_YEAR_PRICE", "DECIMALS", "TABLE_IDENTIFIER", "TITLE", "UNIT_MULT", "LAST_UPDATE", "COMPILING_ORG", "COMMENT_DSET", "COMMENT_TS", "DATA_COMP", "CURRENCY", "DISS_ORG")
-    columnNames = Array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ")
+    headerNames = Array("FREQ", "ADJUSTMENT", "REF_AREA", "COUNTERPART_AREA", "REF_SECTOR", "COUNTERPART_SECTOR", _
+                        "ACCOUNTING_ENTRY", "STO", "INSTR_ASSET", "ACTIVITY", "EXPENDITURE", "UNIT_MEASURE", _
+                        "PRICES", "TRANSFORMATION", "TIME_PERIOD", "OBS_VALUE", "OBS_STATUS", "CONF_STATUS", _
+                        "COMMENT_OBS", "PRE_BREAK_VALUE", "EMBARGO_DATE", "REF_PERIOD_DETAIL", "TIME_FORMAT", _
+                        "TIME_PER_COLLECT", "REF_YEAR_PRICE", "DECIMALS", "TABLE_IDENTIFIER", "TITLE", _
+                        "UNIT_MULT", "LAST_UPDATE", "COMPILING_ORG", "COMMENT_DSET", "COMMENT_TS", _
+                        "DATA_COMP", "CURRENCY", "DISS_ORG")
+    columnNames = Array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", _
+                        "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", _
+                        "AI", "AJ")
     For i = 0 To 35
         PBL_outputWs.Range(columnNames(i) & "1").Value = headerNames(i)
     Next i
@@ -883,6 +936,149 @@ Dim boolString As String
     PBL_outputWs.Cells(i, 17).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsStatus)
     PBL_outputWs.Cells(i, 18).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(confStatus)
     PBL_outputWs.Cells(i, 29).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMult)
+    
+    On Error GoTo 0
+    Exit Sub
+    
+'Vetva na error-handling
+errHandler:
+
+    Call errorHandler(SUB_NAME, PBL_worksheetName)
+
+End Sub
+
+'--------------------------------
+'Konverzia dat z tabuliek typu SU
+'--------------------------------
+Sub SUdataConversion(startRange As String, endRange As String)
+
+Const SUB_NAME = "SUdataConversion"
+
+Dim i As Integer
+Dim j As Integer
+Dim firstRow As Integer
+Dim lastRow As Integer
+Dim leadingRowStart As Integer
+Dim leadingRowEnd As Integer
+Dim leadingColStart As Integer
+Dim leadingColEnd As Integer
+Dim leadingValueStart As Range
+Dim leadingValueEnd As Range
+
+Dim headerNames As Variant
+Dim columnNames As Variant
+    
+Dim sto() As String
+Dim accountingEntry() As String
+Dim refSector() As String
+Dim counterpartArea() As String
+Dim valuation() As String
+Dim custBreakdown1() As String
+Dim custBreakdown2() As String
+Dim obsValue() As Variant
+Dim activity() As String
+Dim activityTo() As String
+Dim product() As String
+Dim productTo() As String
+
+Dim boolString As String
+
+'Spustenie vetvy "errHandler" ak sa vyskytne chyba
+    On Error GoTo errHandler
+
+'Vymedzenie riadiacich prvkov cyklu
+    Set leadingValueStart = Range(startRange)
+    Set leadingValueEnd = Range(endRange)
+    
+    leadingRowStart = leadingValueStart.Row
+    leadingRowEnd = leadingValueEnd.Row
+    
+    firstRow = leadingRowStart
+    lastRow = leadingRowEnd
+    
+'Inicializacia riadiacich hodnot - zac. stlpec, kon. stlpec
+    leadingColStart = leadingValueStart.Column
+    leadingColEnd = leadingValueEnd.Column
+    
+'Vyplnenie hlavicky vystupnej tabulky
+    headerNames = Array("FREQ", "REF_AREA", "COUNTERPART_AREA", "REF_SECTOR", "COUNTERPART_SECTOR", "ACCOUNTING_ENTRY", "STO", _
+                        "ACTIVITY", "ACTIVITY_TO", "PRODUCT", "PRODUCT_TO", "UNIT_MEASURE", "VALUATION", "PRICES", _
+                        "CUST_BREAKDOWN", "CUST_BREAKDOWN", "TIME_PERIOD", "OBS_VALUE", "OBS_STATUS", "CONF_STATUS", _
+                        "COMMENT_OBS", "PRE_BREAK_VALUE", "EMBARGO_DATE", "REF_PERIOD_DETAIL", "TIME_FORMAT", _
+                        "TIME_PER_COLLECT", "DECIMALS", "TABLE_IDENTIFIER", "TITLE", "UNIT_MULT", "LAST_UPDATE", _
+                        "COMPILING_ORG", "COMMENT_DSET", "COMMENT_TS", "DATA_COMP", "CURRENCY", "DISS_ORG")
+    columnNames = Array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", _
+                        "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK")
+    For i = 0 To 36
+        PBL_outputWs.Range(columnNames(i) & "1").Value = headerNames(i)
+    Next i
+    
+'Vypocet posledneho vyplneneho riadku vo vystupnej tabulke (i), od [i+1] sa zacnu kopirovat nove hodnoty
+    i = PBL_outputWs.Cells(Rows.count, "R").End(xlUp).Row
+    i = i + 1
+    PBL_copyStart = i
+    
+'Pocitadlo hodnot OBS_VALUE pre spravne dimenzovanie poli
+    j = 0
+    
+'Hlavny cyklus
+    For PBL_rowStep = firstRow To lastRow
+        
+'Kontrola nacitania riadku
+        boolString = PBL_inputWs.Cells(PBL_rowStep, leadingColStart - 1).Value
+        If boolString = "1" Then
+            For PBL_colStep = leadingColStart To leadingColEnd
+                
+'Kontrola nacitania stlpca
+                boolString = PBL_inputWs.Cells(firstRow - 1, PBL_colStep).Value
+                If boolString = "1" Then
+                        
+'Nacitanie dat do pomocnych premennych
+                    ReDim Preserve sto(j)
+                    ReDim Preserve accountingEntry(j)
+                    ReDim Preserve refSector(j)
+                    ReDim Preserve counterpartArea(j)
+                    ReDim Preserve valuation(j)
+                    ReDim Preserve custBreakdown1(j)
+                    ReDim Preserve custBreakdown2(j)
+                    ReDim Preserve obsValue(j)
+                    ReDim Preserve activity(j)
+                    ReDim Preserve activityTo(j)
+                    ReDim Preserve product(j)
+                    ReDim Preserve productTo(j)
+                    
+                    sto(j) = PBL_inputWs.Cells(leadingRowStart - 8, PBL_colStep).Value
+                    accountingEntry(j) = PBL_inputWs.Cells(leadingRowStart - 7, PBL_colStep).Value
+                    refSector(j) = PBL_inputWs.Cells(leadingRowStart - 6, PBL_colStep).Value
+                    counterpartArea(j) = PBL_inputWs.Cells(leadingRowStart - 5, PBL_colStep).Value
+                    valuation(j) = PBL_inputWs.Cells(leadingRowStart - 4, PBL_colStep).Value
+                    custBreakdown1(j) = PBL_inputWs.Cells(leadingRowStart - 3, PBL_colStep).Value
+                    custBreakdown2(j) = PBL_inputWs.Cells(leadingRowStart - 2, PBL_colStep).Value
+                    obsValue(j) = PBL_inputWs.Cells(PBL_rowStep, PBL_colStep).Value
+                    activity(j) = PBL_inputWs.Cells(PBL_rowStep, PBL_colStep + 1).Value
+                    activityTo(j) = PBL_inputWs.Cells(PBL_rowStep, PBL_colStep + 2).Value
+                    product(j) = PBL_inputWs.Cells(PBL_rowStep, PBL_colStep + 3).Value
+                    productTo(j) = PBL_inputWs.Cells(PBL_rowStep, PBL_colStep + 4).Value
+
+                    j = j + 1
+                End If
+            Next PBL_colStep
+        End If
+    Next PBL_rowStep
+    
+'Ulozenie hodnot z pomocnych premennych do prislusnych stlpcov vystupneho harku na riadku "i"
+    PBL_outputWs.Cells(i, 18).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
+    PBL_outputWs.Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
+    PBL_outputWs.Cells(i, 6).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(accountingEntry)
+    PBL_outputWs.Cells(i, 4).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refSector)
+    PBL_outputWs.Cells(i, 3).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartArea)
+    PBL_outputWs.Cells(i, 13).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(valuation)
+    PBL_outputWs.Cells(i, 15).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(custBreakdown1)
+    PBL_outputWs.Cells(i, 16).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(custBreakdown2)
+    PBL_outputWs.Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(activity)
+    PBL_outputWs.Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(activityTo)
+    PBL_outputWs.Cells(i, 10).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(product)
+    PBL_outputWs.Cells(i, 11).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(productTo)
     
     On Error GoTo 0
     Exit Sub
