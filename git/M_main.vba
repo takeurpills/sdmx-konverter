@@ -6,7 +6,7 @@ Option Explicit
 '----------------------------------------------
 Sub ProgramInit()
     
-    PBL_programVersion = "v0.6"
+    PBL_programVersion = "v0.7"
     PBL_programName = ActiveWorkbook.FullName
     
     F_main.Show vbModeless
@@ -72,6 +72,13 @@ Dim startVal As Range, endVal As Range
                         Set startVal = PBL_inputWs.Range("F2")
                         Set endVal = PBL_inputWs.Range("F3")
                         If PBL_inputWs.Cells(12, 1).Value = "CUST_BREAKDOWN" And PBL_inputWs.Cells(1, 6).Value = "NA_SEC" _
+                        And cellValueRefTest(startVal, endVal) = True Then
+                            conversionCheck = True
+                        End If
+                    Case PBL_NTL
+                        Set startVal = PBL_inputWs.Range("K2")
+                        Set endVal = PBL_inputWs.Range("K3")
+                        If PBL_inputWs.Cells(19, 1).Value = "OBS_EDP_WBB" And PBL_inputWs.Cells(1, 11).Value = "NA_SEC_NTL" _
                         And cellValueRefTest(startVal, endVal) = True Then
                             conversionCheck = True
                         End If

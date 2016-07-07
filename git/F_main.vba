@@ -39,6 +39,7 @@ Private Sub UserForm_Initialize()
     optPENS.BackColor = RGB(204, 236, 255)
     optREG.BackColor = RGB(204, 236, 255)
     optSEC.BackColor = RGB(204, 236, 255)
+    optNTL.BackColor = RGB(204, 236, 255)
     optSU.BackColor = RGB(204, 236, 255)
     
 'Nastavenie velkosti a formatu pismen elementov
@@ -231,6 +232,7 @@ Dim infoMsg As String
 
 'Overenie typu konverzie (typ template)
     If optSEC = True Then conversionType = PBL_SEC
+    If optNTL = True Then conversionType = PBL_NTL
     If optREG = True Then conversionType = PBL_REG
     If optPENS = True Then conversionType = PBL_PENS
     If optMAIN = True Then conversionType = PBL_MAIN
