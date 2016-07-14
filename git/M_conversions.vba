@@ -207,20 +207,17 @@ Dim paramValue As String
             
         Case PBL_SU
         
-'Nacitanie 13+12 = 25 hodnot
-            ReDim PBL_parameterFix(1 To 25)
-            
-            s = 2
-            For r = 1 To 13
-                paramValue = PBL_inputWs.Cells(r, s)
-                PBL_parameterFix(r) = paramValue
-            Next
-            
-            s = 4
-            For r = 1 To 12
-                x = r + 13
-                paramValue = PBL_inputWs.Cells(r, s)
-                PBL_parameterFix(x) = paramValue
+'Nacitanie 2*12 = 24 hodnot
+            i = 0
+            ReDim PBL_parameterFix(1 To 24)
+        
+            For s = 2 To 4 Step 2
+                For r = 1 To 12
+                    x = r + 12 * i
+                    paramValue = PBL_inputWs.Cells(r, s)
+                    PBL_parameterFix(x) = paramValue
+                Next
+                i = i + 1
             Next
     End Select
 
@@ -301,12 +298,12 @@ Dim copyEnd As Integer
             Next PBL_rowStep
             
         Case PBL_SU
-            usedColumns = Array(0, 1, 2, 5, 14, 21, 22, 23, 24, 25, 26, 30, 12, 17, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 19, 20)
+            usedColumns = Array(0, 1, 2, 5, 14, 21, 22, 23, 24, 25, 26, 30, 12, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 19, 20)
             copyStart = PBL_copyStart
             copyEnd = PBL_outputWs.Cells(Rows.count, "R").End(xlUp).Row
             
             For PBL_rowStep = copyStart To copyEnd
-                For i = 1 To 25
+                For i = 1 To 24
                     PBL_outputWs.Cells(PBL_rowStep, usedColumns(i)).Value = PBL_parameterFix(i)
                 Next i
             Next PBL_rowStep
@@ -479,7 +476,7 @@ Dim boolString As String
     For PBL_rowStep = firstRow To lastRow
         
 'Kontrola nacitania riadku
-        boolString = PBL_inputWs.Cells(PBL_rowStep, leadingColStart - 6).Value
+        boolString = PBL_inputWs.Cells(PBL_rowStep, leadingColStart - 5).Value
         If boolString = "1" Then
             For PBL_colStep = leadingColStart To leadingColEnd
                 
@@ -509,8 +506,9 @@ Dim boolString As String
                     ReDim Preserve obsStatus(j)
                     ReDim Preserve confStatus(j)
                     
-                    counterpartArea(j) = PBL_inputWs.Cells(leadingRowStart - 13, PBL_colStep).Value
-                    counterpartSector(j) = PBL_inputWs.Cells(leadingRowStart - 12, PBL_colStep).Value
+                    counterpartArea(j) = PBL_inputWs.Cells(leadingRowStart - 14, PBL_colStep).Value
+                    counterpartSector(j) = PBL_inputWs.Cells(leadingRowStart - 13, PBL_colStep).Value
+                    refSector(j) = PBL_inputWs.Cells(leadingRowStart - 12, PBL_colStep).Value
                     accountingEntry(j) = PBL_inputWs.Cells(leadingRowStart - 11, PBL_colStep).Value
                     sto(j) = PBL_inputWs.Cells(leadingRowStart - 10, PBL_colStep).Value
                     unitMeasure(j) = PBL_inputWs.Cells(leadingRowStart - 9, PBL_colStep).Value
@@ -521,8 +519,7 @@ Dim boolString As String
                     prices(j) = PBL_inputWs.Cells(leadingRowStart - 4, PBL_colStep).Value
                     refYearPrice(j) = PBL_inputWs.Cells(leadingRowStart - 3, PBL_colStep).Value
                     embargoDate(j) = PBL_inputWs.Cells(leadingRowStart - 2, PBL_colStep).Value
-                    timePeriod(j) = PBL_inputWs.Cells(PBL_rowStep, leadingColStart - 5).Value
-                    refSector(j) = PBL_inputWs.Cells(PBL_rowStep, leadingColStart - 4).Value
+                    timePeriod(j) = PBL_inputWs.Cells(PBL_rowStep, leadingColStart - 4).Value
                     expenditure(j) = PBL_inputWs.Cells(PBL_rowStep, leadingColStart - 3).Value
                     instrAsset(j) = PBL_inputWs.Cells(PBL_rowStep, leadingColStart - 2).Value
                     maturity(j) = PBL_inputWs.Cells(PBL_rowStep, leadingColStart - 1).Value
@@ -1147,6 +1144,7 @@ Dim activity() As String
 Dim activityTo() As String
 Dim product() As String
 Dim productTo() As String
+Dim timePeriod() As String
 
 Dim boolString As String
 
@@ -1213,6 +1211,7 @@ Dim boolString As String
                     ReDim Preserve activityTo(j)
                     ReDim Preserve product(j)
                     ReDim Preserve productTo(j)
+                    ReDim Preserve timePeriod(j)
                     
                     sto(j) = PBL_inputWs.Cells(leadingRowStart - 8, PBL_colStep).Value
                     accountingEntry(j) = PBL_inputWs.Cells(leadingRowStart - 7, PBL_colStep).Value
@@ -1226,6 +1225,7 @@ Dim boolString As String
                     activityTo(j) = PBL_inputWs.Cells(PBL_rowStep, PBL_colStep + 2).Value
                     product(j) = PBL_inputWs.Cells(PBL_rowStep, PBL_colStep + 3).Value
                     productTo(j) = PBL_inputWs.Cells(PBL_rowStep, PBL_colStep + 4).Value
+                    timePeriod(j) = PBL_inputWs.Cells(PBL_rowStep, PBL_colStep + 5).Value
 
                     j = j + 1
                 End If
@@ -1246,6 +1246,7 @@ Dim boolString As String
     PBL_outputWs.Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(activityTo)
     PBL_outputWs.Cells(i, 10).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(product)
     PBL_outputWs.Cells(i, 11).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(productTo)
+    PBL_outputWs.Cells(i, 17).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(timePeriod)
     
     On Error GoTo 0
     Exit Sub
