@@ -71,21 +71,28 @@ Dim startVal As Range, endVal As Range
                     Case PBL_SEC
                         Set startVal = PBL_inputWs.Range("F2")
                         Set endVal = PBL_inputWs.Range("F3")
-                        If PBL_inputWs.Cells(12, 1).Value = "CUST_BREAKDOWN" And PBL_inputWs.Cells(1, 6).Value = "NA_SEC" _
+                        If PBL_inputWs.Cells(13, 1).Value = "COLL_PERIOD" And PBL_inputWs.Cells(1, 6).Value = "NA_SEC" _
                         And cellValueRefTest(startVal, endVal) = True Then
                             conversionCheck = True
                         End If
-                    Case PBL_NTL
+                    Case PBL_T9XX
                         Set startVal = PBL_inputWs.Range("K2")
                         Set endVal = PBL_inputWs.Range("K3")
-                        If PBL_inputWs.Cells(19, 1).Value = "OBS_EDP_WBB" And PBL_inputWs.Cells(1, 11).Value = "NA_SEC_NTL" _
+                        If PBL_inputWs.Cells(19, 1).Value = "OBS_EDP_WBB" And PBL_inputWs.Cells(1, 11).Value = "NA_SEC_9XX" _
+                        And cellValueRefTest(startVal, endVal) = True Then
+                            conversionCheck = True
+                        End If
+                    Case PBL_T200
+                        Set startVal = PBL_inputWs.Range("H2")
+                        Set endVal = PBL_inputWs.Range("H3")
+                        If PBL_inputWs.Cells(13, 1).Value = "COLL_PERIOD" And PBL_inputWs.Cells(1, 8).Value = "NA_SEC_200" _
                         And cellValueRefTest(startVal, endVal) = True Then
                             conversionCheck = True
                         End If
                     Case PBL_REG
                         Set startVal = PBL_inputWs.Range("F2")
                         Set endVal = PBL_inputWs.Range("F3")
-                        If PBL_inputWs.Cells(11, 1).Value = "REF_SECTOR" And PBL_inputWs.Cells(1, 6).Value = "NA_REG" _
+                        If PBL_inputWs.Cells(11, 1).Value = "TIME_PERIOD" And PBL_inputWs.Cells(1, 6).Value = "NA_REG" _
                         And cellValueRefTest(startVal, endVal) = True Then
                             conversionCheck = True
                         End If
@@ -99,7 +106,7 @@ Dim startVal As Range, endVal As Range
                     Case PBL_MAIN
                         Set startVal = PBL_inputWs.Range("F2")
                         Set endVal = PBL_inputWs.Range("F3")
-                        If PBL_inputWs.Cells(12, 1).Value = "TIME_PER_COLLECT" And PBL_inputWs.Cells(1, 6).Value = "NA_MAIN" _
+                        If PBL_inputWs.Cells(11, 1).Value = "TIME_PER_COLLECT" And PBL_inputWs.Cells(1, 6).Value = "NA_MAIN" _
                         And cellValueRefTest(startVal, endVal) = True Then
                             conversionCheck = True
                         End If
