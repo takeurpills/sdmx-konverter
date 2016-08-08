@@ -535,7 +535,7 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 14, leadingCol
 
 'Kontrola nacitania stlpca
                 boolString = dataRange(14, PBL_colStep)
-                If boolString = "1" Then
+                If boolString = "1" And PBL_colStep + 2 <= UBound(dataRange, 2) Then
 
 'Nacitanie dat do pomocnych premennych
                     ReDim Preserve counterpartArea(j)
@@ -837,7 +837,7 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 2, leadingColS
 
 'Kontrola nacitania stlpca
                 boolString = dataRange(2, PBL_colStep)
-                If boolString = "1" Then
+                If boolString = "1" And PBL_colStep + 2 <= UBound(dataRange, 2) Then
 
 'Nacitanie dat do pomocnych premennych
                     ReDim Preserve refSector(j)
@@ -973,7 +973,7 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 9, leadingColS
 
 'Kontrola nacitania stlpca
                 boolString = dataRange(9, PBL_colStep)
-                If boolString = "1" Then
+                If boolString = "1" And PBL_colStep + 2 <= UBound(dataRange, 2) Then
 
 'Nacitanie dat do pomocnych premennych
                     ReDim Preserve accountingEntry(j)
@@ -1117,7 +1117,7 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 4, leadingColS
 
 'Kontrola nacitania stlpca
                 boolString = dataRange(4, PBL_colStep)
-                If boolString = "1" Then
+                If boolString = "1" And PBL_colStep + 2 <= UBound(dataRange, 2) Then
 
 'Nacitanie dat do pomocnych premennych
                     ReDim Preserve counterpartArea(j)
@@ -1256,7 +1256,7 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 9, leadingColS
 
 'Kontrola nacitania stlpca
                 boolString = dataRange(9, PBL_colStep)
-                If boolString = "1" Then
+                If boolString = "1" And PBL_colStep + 5 <= UBound(dataRange, 2) Then
 
 'Nacitanie dat do pomocnych premennych
                     ReDim Preserve counterpartArea(j)
@@ -1410,7 +1410,7 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 8, leadingColS
 
 'Kontrola nacitania stlpca
                 boolString = dataRange(8, PBL_colStep)
-                If boolString = "1" Then
+                If boolString = "1" And PBL_colStep + 5 <= UBound(dataRange, 2) Then
 
 'Nacitanie dat do pomocnych premennych
                     ReDim Preserve custBreakdownLb(j)
