@@ -21,8 +21,10 @@ Option Explicit
 Private Sub UserForm_Initialize()
         
 'Minimalizuje instanciu vo fullscreen mode
-    Application.WindowState = xlMaximized
-    Application.WindowState = xlMinimized
+    With Application
+        .WindowState = xlMaximized
+        .WindowState = xlMinimized
+    End With
     
 'Nastavenie farieb elementov userformu
     Me.BackColor = RGB(204, 236, 255)
@@ -151,9 +153,9 @@ End Sub
 '------------------------------------------------------------------
 Sub lbSort(lbArgument As Object)
 
-Dim i As Long
-Dim j As Long
-Dim x As Long
+Dim i As Integer
+Dim j As Integer
+Dim x As Integer
 Dim temp As String
     
     With lbArgument

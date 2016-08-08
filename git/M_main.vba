@@ -6,7 +6,7 @@ Option Explicit
 '----------------------------------------------
 Sub ProgramInit()
     
-    PBL_programVersion = "v0.71"
+    PBL_programVersion = "v0.8"
     PBL_programName = ActiveWorkbook.FullName
     
     F_main.Show vbModeless
@@ -85,7 +85,7 @@ Dim startVal As Range, endVal As Range
                     Case PBL_T200
                         Set startVal = PBL_inputWs.Range("H2")
                         Set endVal = PBL_inputWs.Range("H3")
-                        If PBL_inputWs.Cells(13, 1).Value = "COLL_PERIOD" And PBL_inputWs.Cells(1, 8).Value = "NA_SEC_200" _
+                        If PBL_inputWs.Cells(13, 1).Value = "TIME_PERIOD" And PBL_inputWs.Cells(1, 8).Value = "NA_SEC_200" _
                         And cellValueRefTest(startVal, endVal) = True Then
                             conversionCheck = True
                         End If
@@ -173,15 +173,16 @@ Dim startVal As Range, endVal As Range
                 folderPath = PBL_xlApp.ActiveWorkbook.Path
                 timeStamp = Format(CStr(Now), "yyyy_mm_dd_hhmmss")
                 saveName = folderPath & "\" & workbookName & "_" & timeStamp
-    
                 PBL_xlNew.Workbooks(1).SaveAs fileName:=saveName, FileFormat:=xlCSV, local:=True
             End If
             
-            PBL_xlNew.Calculation = xlCalculationAutomatic
-            PBL_xlNew.ScreenUpdating = True
-            PBL_xlNew.Workbooks(1).Close False
-            PBL_xlNew.Quit
-            
+            With PBL_xlNew
+                .Calculation = xlCalculationAutomatic
+                .ScreenUpdating = True
+                .Workbooks(1).Close False
+                .Quit
+            End With
+
             Call UnloadForms
              
             PBL_xlApp.Quit

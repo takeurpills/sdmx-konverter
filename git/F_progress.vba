@@ -22,9 +22,11 @@ Private Sub UserForm_Initialize()
 
     Me.BackColor = RGB(204, 236, 255)
     infoImage.BackColor = RGB(204, 236, 255)
-    infoLab.BackColor = RGB(204, 236, 255)
-
-    infoLab.Font.Size = 9
-    infoLab.Font.Bold = True
+    
+    With infoLab
+        .BackColor = RGB(204, 236, 255)
+        .Font.Size = 9
+        .Font.Bold = True
+    End With
     
 End Sub

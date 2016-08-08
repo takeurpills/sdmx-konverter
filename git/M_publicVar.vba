@@ -25,8 +25,8 @@ Public PBL_inputWsId() As Integer
 Public PBL_conversionOk As Integer
 Public PBL_conversionFail As Integer
 
-Public PBL_rowStep As Integer
-Public PBL_colStep As Integer
+Public PBL_rowStep As Long
+Public PBL_colStep As Long
 
 Public PBL_inputWs As Worksheet
 Public PBL_outputWs As Worksheet
@@ -35,4 +35,4 @@ Public PBL_inputWb As Workbook
 Public PBL_parameterFix() As Variant
 Public PBL_fileToOpen As Variant
 
-Public PBL_copyStart As Integer
+Public PBL_copyStart As Long
