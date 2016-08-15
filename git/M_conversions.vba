@@ -141,7 +141,7 @@ Dim paramValue As String
             
             s = 4
             For r = 1 To 12
-                x = r + 12
+                x = r + 13
                 paramValue = PBL_inputWs.Cells(r, s)
                 PBL_parameterFix(x) = paramValue
             Next

@@ -42,7 +42,7 @@ Dim saveName As String
 Dim folderPath As String
 
     wbName = "SDMXtester"
-    folderPath = "C:\Users\Martin\Dropbox\SUSR\project_tester"
+    folderPath = "C:\Users\Martin\Dropbox\SUSR\ESA2010\project_tester"
     saveName = folderPath & "\" & wbName & ".xlsm"
 
     ThisWorkbook.SaveCopyAs fileName:=saveName
