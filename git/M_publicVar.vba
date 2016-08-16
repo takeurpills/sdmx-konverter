@@ -9,6 +9,7 @@ Public Const PBL_MAIN = 4
 Public Const PBL_SU = 5
 Public Const PBL_T9XX = 6
 Public Const PBL_T200 = 7
+Public Const PBL_T1100 = 8
 
 Public Const PBL_OK = "OK"
 Public Const PBL_FAIL = "FAIL"

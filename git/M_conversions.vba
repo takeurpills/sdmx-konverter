@@ -99,6 +99,7 @@ Const SUB_NAME = "unloadForms"
         .lbLeft.Clear
         .lbRight.Clear
         .optSEC.Value = False
+        .optT1100.Value = False
         .optT9XX.Value = False
         .optT200.Value = False
         .optREG.Value = False
@@ -128,7 +129,7 @@ Dim x As Integer
 Dim paramValue As String
     
     Select Case conversionType
-        Case PBL_SEC
+        Case PBL_SEC, PBL_T1100
         
 'Nacitanie 13+12 = 25 hodnot
             ReDim PBL_parameterFix(1 To 25)
@@ -267,7 +268,7 @@ Dim copyEnd As Long
 'copyEnd     = spocita kolko riadkov je vyplnenych vo vystupnej tabulke v stlpci OBS_VALUE (tolko riadkov bude naplnenych)
     
     Select Case conversionType
-        Case PBL_SEC
+        Case PBL_SEC, PBL_T1100
             usedColumns = Array(0, 1, 2, 3, 17, 23, 26, 28, 29, 30, 14, 18, 31, 39, 15, 33, 34, 35, 37, 38, 27, 40, 43, 44, 45, 25)
             copyStart = PBL_copyStart
             copyEnd = PBL_outputWs.Cells(Rows.count, "T").End(xlUp).Row
@@ -380,6 +381,15 @@ Dim typeFlag As String
             
             Call SECdataConversion(startRange, endRange)
             
+        Case PBL_T1100
+            startRangeInstrument = PBL_inputWs.Range("F2").Value
+            endRangeInstrument = PBL_inputWs.Range("F3").Value
+            
+            startRange = startRangeInstrument
+            endRange = endRangeInstrument
+            
+            Call T1100dataConversion(startRange, endRange)
+                        
          Case PBL_T9XX
             startRangeInstrument = PBL_inputWs.Range("K2").Value
             endRangeInstrument = PBL_inputWs.Range("K3").Value
@@ -576,6 +586,189 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 14, leadingCol
                     expenditure(j) = dataRange(PBL_rowStep, 3)
                     instrAsset(j) = dataRange(PBL_rowStep, 4)
                     maturity(j) = dataRange(PBL_rowStep, 5)
+                    obsValue(j) = dataRange(PBL_rowStep, PBL_colStep)
+                    obsStatus(j) = dataRange(PBL_rowStep, PBL_colStep + 1)
+                    confStatus(j) = dataRange(PBL_rowStep, PBL_colStep + 2)
+
+                    j = j + 1
+                End If
+            Next PBL_colStep
+        End If
+    Next PBL_rowStep
+
+'Ulozenie hodnot z pomocnych premennych do prislusnych stlpcov vystupneho harku na riadku "i"
+    With PBL_outputWs
+        .Cells(i, 20).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
+        .Cells(i, 4).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartArea)
+        .Cells(i, 5).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refSector)
+        .Cells(i, 6).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartSector)
+        .Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(consolidation)
+        .Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(accountingEntry)
+        .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
+        .Cells(i, 10).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(instrAsset)
+        .Cells(i, 11).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(maturity)
+        .Cells(i, 12).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(expenditure)
+        .Cells(i, 13).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMeasure)
+        .Cells(i, 16).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(prices)
+        .Cells(i, 19).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(timePeriod)
+        .Cells(i, 21).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsStatus)
+        .Cells(i, 22).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(confStatus)
+        .Cells(i, 24).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(embargoDate)
+        .Cells(i, 32).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refYearPrice)
+        .Cells(i, 36).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMult)
+        .Cells(i, 41).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsEcofunc)
+        .Cells(i, 42).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsTaxcat)
+    End With
+
+    On Error GoTo 0
+    Exit Sub
+
+'Vetva na error-handling
+errHandler:
+
+    Call errorHandler(SUB_NAME, PBL_worksheetName)
+
+End Sub
+
+
+'--------------------------------------
+'Konverzia dat z tabuliek typu SEC_1100
+'--------------------------------------
+Sub T1100dataConversion(startRange As String, endRange As String)
+
+Const SUB_NAME = "T1100dataConversion"
+
+Dim i As Long
+Dim j As Long
+Dim firstRow As Long
+Dim lastRow As Long
+Dim leadingRowStart As Long
+Dim leadingRowEnd As Long
+Dim leadingColStart As Long
+Dim leadingColEnd As Long
+Dim leadingValueStart As Range
+Dim leadingValueEnd As Range
+
+Dim headerNames As Variant
+Dim columnNames As Variant
+    
+Dim counterpartArea() As String
+Dim counterpartSector() As String
+Dim accountingEntry() As String
+Dim sto() As String
+Dim unitMeasure() As String
+Dim unitMult() As String
+Dim gfsEcofunc() As String
+Dim gfsTaxcat() As String
+Dim consolidation() As String
+Dim prices() As String
+Dim refYearPrice() As String
+Dim embargoDate() As String
+Dim timePeriod() As String
+Dim refSector() As String
+Dim expenditure() As String
+Dim instrAsset() As String
+Dim maturity() As String
+Dim obsValue() As Variant
+Dim obsStatus() As String
+Dim confStatus() As String
+
+Dim boolString As String
+Dim dataRange As Variant
+
+'Spustenie vetvy "errHandler" ak sa vyskytne chyba
+    On Error GoTo errHandler
+
+'Vymedzenie riadiacich prvkov cyklu
+    Set leadingValueStart = Range(startRange)
+    Set leadingValueEnd = Range(endRange)
+    
+    leadingRowStart = leadingValueStart.Row
+    leadingRowEnd = leadingValueEnd.Row
+    
+    firstRow = leadingRowStart
+    lastRow = leadingRowEnd
+    
+'Inicializacia riadiacich hodnot - zac. stlpec, kon. stlpec
+    leadingColStart = leadingValueStart.Column
+    leadingColEnd = leadingValueEnd.Column
+    
+'Vyplnenie hlavicky vystupnej tabulky
+    headerNames = Array("FREQ", "ADJUSTMENT", "REF_AREA", "COUNTERPART_AREA", "REF_SECTOR", "COUNTERPART_SECTOR", "CONSOLIDATION", _
+                        "ACCOUNTING_ENTRY", "STO", "INSTR_ASSET", "MATURITY", "EXPENDITURE", "UNIT_MEASURE", "CURRENCY_DENOM", _
+                        "VALUATION", "PRICES", "TRANSFORMATION", "CUST_BREAKDOWN", "TIME_PERIOD", "OBS_VALUE", "OBS_STATUS", _
+                        "CONF_STATUS", "COMMENT_OBS", "EMBARGO_DATE", "OBS_EDP_WBB", "PRE_BREAK_VALUE", "COMMENT_DSET", _
+                        "REF_PERIOD_DETAIL", "TIME_FORMAT", "TIME_PER_COLLECT", "CUST_BREAKDOWN_LB", "REF_YEAR_PRICE", _
+                        "DECIMALS", "TABLE_IDENTIFIER", "TITLE", "UNIT_MULT", "LAST_UPDATE", "COMPILING_ORG", "COLL_PERIOD", _
+                        "COMMENT_TS", "GFS_ECOFUNC", "GFS_TAXCAT", "DATA_COMP", "CURRENCY", "DISS_ORG")
+    columnNames = Array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", _
+                        "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", _
+                        "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS")
+    For i = 0 To UBound(headerNames)
+        PBL_outputWs.Range(columnNames(i) & "1").Value = headerNames(i)
+    Next i
+
+'Vypocet posledneho vyplneneho riadku vo vystupnej tabulke (i), od [i+1] sa zacnu kopirovat nove hodnoty
+    i = PBL_outputWs.Cells(Rows.count, "T").End(xlUp).Row
+    i = i + 1
+    PBL_copyStart = i
+    
+'Pocitadlo hodnot OBS_VALUE pre spravne dimenzovanie poli
+    j = 0
+
+dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 13, leadingColStart - 6), PBL_inputWs.Cells(leadingRowEnd, leadingColEnd)).Value
+    
+'Hlavny cyklus
+    For PBL_rowStep = 14 To UBound(dataRange, 1)
+
+'Kontrola nacitania riadku
+        boolString = dataRange(PBL_rowStep, 1)
+        If boolString = "1" Then
+            For PBL_colStep = 7 To UBound(dataRange, 2) Step 3
+
+'Kontrola nacitania stlpca
+                boolString = dataRange(13, PBL_colStep)
+                If boolString = "1" And PBL_colStep + 2 <= UBound(dataRange, 2) Then
+
+'Nacitanie dat do pomocnych premennych
+                    ReDim Preserve counterpartArea(j)
+                    ReDim Preserve counterpartSector(j)
+                    ReDim Preserve accountingEntry(j)
+                    ReDim Preserve sto(j)
+                    ReDim Preserve unitMeasure(j)
+                    ReDim Preserve unitMult(j)
+                    ReDim Preserve gfsEcofunc(j)
+                    ReDim Preserve gfsTaxcat(j)
+                    ReDim Preserve consolidation(j)
+                    ReDim Preserve prices(j)
+                    ReDim Preserve refYearPrice(j)
+                    ReDim Preserve embargoDate(j)
+                    ReDim Preserve timePeriod(j)
+                    ReDim Preserve refSector(j)
+                    ReDim Preserve expenditure(j)
+                    ReDim Preserve instrAsset(j)
+                    ReDim Preserve maturity(j)
+                    ReDim Preserve obsValue(j)
+                    ReDim Preserve obsStatus(j)
+                    ReDim Preserve confStatus(j)
+                    
+                    counterpartArea(j) = dataRange(1, PBL_colStep)
+                    counterpartSector(j) = dataRange(2, PBL_colStep)
+                    accountingEntry(j) = dataRange(3, PBL_colStep)
+                    sto(j) = dataRange(4, PBL_colStep)
+                    unitMeasure(j) = dataRange(5, PBL_colStep)
+                    unitMult(j) = dataRange(6, PBL_colStep)
+                    gfsEcofunc(j) = dataRange(7, PBL_colStep)
+                    gfsTaxcat(j) = dataRange(8, PBL_colStep)
+                    consolidation(j) = dataRange(9, PBL_colStep)
+                    prices(j) = dataRange(10, PBL_colStep)
+                    refYearPrice(j) = dataRange(11, PBL_colStep)
+                    embargoDate(j) = dataRange(12, PBL_colStep)
+                    timePeriod(j) = dataRange(PBL_rowStep, 2)
+                    refSector(j) = dataRange(PBL_rowStep, 3)
+                    expenditure(j) = dataRange(PBL_rowStep, 4)
+                    instrAsset(j) = dataRange(PBL_rowStep, 5)
+                    maturity(j) = dataRange(PBL_rowStep, 6)
                     obsValue(j) = dataRange(PBL_rowStep, PBL_colStep)
                     obsStatus(j) = dataRange(PBL_rowStep, PBL_colStep + 1)
                     confStatus(j) = dataRange(PBL_rowStep, PBL_colStep + 2)
@@ -1105,10 +1298,10 @@ Dim dataRange As Variant
 'Pocitadlo hodnot OBS_VALUE pre spravne dimenzovanie poli
     j = 0
     
-dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 4, leadingColStart - 3), PBL_inputWs.Cells(leadingRowEnd, leadingColEnd)).Value
+dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 5, leadingColStart - 3), PBL_inputWs.Cells(leadingRowEnd, leadingColEnd)).Value
     
 'Hlavny cyklus
-    For PBL_rowStep = 5 To UBound(dataRange, 1)
+    For PBL_rowStep = 6 To UBound(dataRange, 1)
 
 'Kontrola nacitania riadku
         boolString = dataRange(PBL_rowStep, 1)
@@ -1116,7 +1309,7 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 4, leadingColS
             For PBL_colStep = 4 To UBound(dataRange, 2) Step 3
 
 'Kontrola nacitania stlpca
-                boolString = dataRange(4, PBL_colStep)
+                boolString = dataRange(5, PBL_colStep)
                 If boolString = "1" And PBL_colStep + 2 <= UBound(dataRange, 2) Then
 
 'Nacitanie dat do pomocnych premennych
