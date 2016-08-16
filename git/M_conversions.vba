@@ -492,6 +492,7 @@ Dim confStatus() As String
 
 Dim boolString As String
 Dim dataRange As Variant
+Dim errText As String
 
 'Spustenie vetvy "errHandler" ak sa vyskytne chyba
     On Error GoTo errHandler
@@ -597,28 +598,37 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 14, leadingCol
     Next PBL_rowStep
 
 'Ulozenie hodnot z pomocnych premennych do prislusnych stlpcov vystupneho harku na riadku "i"
-    With PBL_outputWs
-        .Cells(i, 20).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
-        .Cells(i, 4).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartArea)
-        .Cells(i, 5).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refSector)
-        .Cells(i, 6).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartSector)
-        .Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(consolidation)
-        .Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(accountingEntry)
-        .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
-        .Cells(i, 10).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(instrAsset)
-        .Cells(i, 11).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(maturity)
-        .Cells(i, 12).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(expenditure)
-        .Cells(i, 13).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMeasure)
-        .Cells(i, 16).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(prices)
-        .Cells(i, 19).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(timePeriod)
-        .Cells(i, 21).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsStatus)
-        .Cells(i, 22).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(confStatus)
-        .Cells(i, 24).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(embargoDate)
-        .Cells(i, 32).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refYearPrice)
-        .Cells(i, 36).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMult)
-        .Cells(i, 41).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsEcofunc)
-        .Cells(i, 42).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsTaxcat)
-    End With
+    If j > 0 Then
+        With PBL_outputWs
+            .Cells(i, 20).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
+            .Cells(i, 4).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartArea)
+            .Cells(i, 5).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refSector)
+            .Cells(i, 6).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartSector)
+            .Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(consolidation)
+            .Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(accountingEntry)
+            .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
+            .Cells(i, 10).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(instrAsset)
+            .Cells(i, 11).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(maturity)
+            .Cells(i, 12).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(expenditure)
+            .Cells(i, 13).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMeasure)
+            .Cells(i, 16).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(prices)
+            .Cells(i, 19).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(timePeriod)
+            .Cells(i, 21).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsStatus)
+            .Cells(i, 22).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(confStatus)
+            .Cells(i, 24).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(embargoDate)
+            .Cells(i, 32).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refYearPrice)
+            .Cells(i, 36).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMult)
+            .Cells(i, 41).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsEcofunc)
+            .Cells(i, 42).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsTaxcat)
+        End With
+    Else
+        PBL_conversionFail = IncrementConversions(PBL_FAIL)
+        
+        errText = "Nepodarilo sa naËÌtaù hodnoty z h·rku: """ & PBL_worksheetName & """." & vbNewLine & _
+        "ProsÌm, skontrolujte si spr·vnosù vyplnenia riadiacich znakov."
+        
+        MsgBox errText, vbInformation, "Inform·cia"
+    End If
 
     On Error GoTo 0
     Exit Sub
@@ -675,6 +685,7 @@ Dim confStatus() As String
 
 Dim boolString As String
 Dim dataRange As Variant
+Dim errText As String
 
 'Spustenie vetvy "errHandler" ak sa vyskytne chyba
     On Error GoTo errHandler
@@ -780,29 +791,38 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 13, leadingCol
     Next PBL_rowStep
 
 'Ulozenie hodnot z pomocnych premennych do prislusnych stlpcov vystupneho harku na riadku "i"
-    With PBL_outputWs
-        .Cells(i, 20).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
-        .Cells(i, 4).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartArea)
-        .Cells(i, 5).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refSector)
-        .Cells(i, 6).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartSector)
-        .Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(consolidation)
-        .Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(accountingEntry)
-        .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
-        .Cells(i, 10).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(instrAsset)
-        .Cells(i, 11).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(maturity)
-        .Cells(i, 12).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(expenditure)
-        .Cells(i, 13).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMeasure)
-        .Cells(i, 16).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(prices)
-        .Cells(i, 19).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(timePeriod)
-        .Cells(i, 21).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsStatus)
-        .Cells(i, 22).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(confStatus)
-        .Cells(i, 24).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(embargoDate)
-        .Cells(i, 32).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refYearPrice)
-        .Cells(i, 36).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMult)
-        .Cells(i, 41).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsEcofunc)
-        .Cells(i, 42).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsTaxcat)
-    End With
-
+    If j > 0 Then
+        With PBL_outputWs
+            .Cells(i, 20).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
+            .Cells(i, 4).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartArea)
+            .Cells(i, 5).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refSector)
+            .Cells(i, 6).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartSector)
+            .Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(consolidation)
+            .Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(accountingEntry)
+            .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
+            .Cells(i, 10).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(instrAsset)
+            .Cells(i, 11).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(maturity)
+            .Cells(i, 12).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(expenditure)
+            .Cells(i, 13).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMeasure)
+            .Cells(i, 16).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(prices)
+            .Cells(i, 19).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(timePeriod)
+            .Cells(i, 21).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsStatus)
+            .Cells(i, 22).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(confStatus)
+            .Cells(i, 24).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(embargoDate)
+            .Cells(i, 32).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refYearPrice)
+            .Cells(i, 36).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMult)
+            .Cells(i, 41).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsEcofunc)
+            .Cells(i, 42).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsTaxcat)
+        End With
+    Else
+        PBL_conversionFail = IncrementConversions(PBL_FAIL)
+        
+        errText = "Nepodarilo sa naËÌtaù hodnoty z h·rku: """ & PBL_worksheetName & """." & vbNewLine & _
+        "ProsÌm, skontrolujte si spr·vnosù vyplnenia riadiacich znakov."
+        
+        MsgBox errText, vbInformation, "Inform·cia"
+    End If
+    
     On Error GoTo 0
     Exit Sub
 
@@ -845,6 +865,7 @@ Dim obsValue() As Variant
 
 Dim boolString As String
 Dim dataRange As Variant
+Dim errText As String
 
 'Spustenie vetvy "errHandler" ak sa vyskytne chyba
     On Error GoTo errHandler
@@ -924,15 +945,24 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 2, leadingColS
     Next PBL_rowStep
     
 'Ulozenie hodnot z pomocnych premennych do prislusnych stlpcov vystupneho harku na riadku "i"
-    With PBL_outputWs
-        .Cells(i, 20).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
-        .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
-        .Cells(i, 18).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(custBreakdown)
-        .Cells(i, 19).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(timePeriod)
-        .Cells(i, 31).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(custBreakdownLb)
-        .Cells(i, 41).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsEcofunc)
-        .Cells(i, 42).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsTaxcat)
-    End With
+    If j > 0 Then
+        With PBL_outputWs
+            .Cells(i, 20).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
+            .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
+            .Cells(i, 18).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(custBreakdown)
+            .Cells(i, 19).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(timePeriod)
+            .Cells(i, 31).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(custBreakdownLb)
+            .Cells(i, 41).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsEcofunc)
+            .Cells(i, 42).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsTaxcat)
+        End With
+    Else
+        PBL_conversionFail = IncrementConversions(PBL_FAIL)
+        
+        errText = "Nepodarilo sa naËÌtaù hodnoty z h·rku: """ & PBL_worksheetName & """." & vbNewLine & _
+        "ProsÌm, skontrolujte si spr·vnosù vyplnenia riadiacich znakov."
+        
+        MsgBox errText, vbInformation, "Inform·cia"
+    End If
     
     On Error GoTo 0
     Exit Sub
@@ -977,6 +1007,7 @@ Dim confStatus() As String
 
 Dim boolString As String
 Dim dataRange As Variant
+Dim errText As String
 
 'Spustenie vetvy "errHandler" ak sa vyskytne chyba
     On Error GoTo errHandler
@@ -1058,16 +1089,25 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 2, leadingColS
     Next PBL_rowStep
     
 'Ulozenie hodnot z pomocnych premennych do prislusnych stlpcov vystupneho harku na riadku "i"
-    With PBL_outputWs
-        .Cells(i, 20).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
-        .Cells(i, 5).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refSector)
-        .Cells(i, 6).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartSector)
-        .Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(consolidation)
-        .Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(accountingEntry)
-        .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
-        .Cells(i, 21).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsStatus)
-        .Cells(i, 22).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(confStatus)
-    End With
+    If j > 0 Then
+        With PBL_outputWs
+            .Cells(i, 20).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
+            .Cells(i, 5).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refSector)
+            .Cells(i, 6).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartSector)
+            .Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(consolidation)
+            .Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(accountingEntry)
+            .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
+            .Cells(i, 21).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsStatus)
+            .Cells(i, 22).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(confStatus)
+        End With
+    Else
+        PBL_conversionFail = IncrementConversions(PBL_FAIL)
+        
+        errText = "Nepodarilo sa naËÌtaù hodnoty z h·rku: """ & PBL_worksheetName & """." & vbNewLine & _
+        "ProsÌm, skontrolujte si spr·vnosù vyplnenia riadiacich znakov."
+        
+        MsgBox errText, vbInformation, "Inform·cia"
+    End If
     
     On Error GoTo 0
     Exit Sub
@@ -1116,6 +1156,7 @@ Dim confStatus() As String
 
 Dim boolString As String
 Dim dataRange As Variant
+Dim errText As String
 
 'Spustenie vetvy "errHandler" ak sa vyskytne chyba
     On Error GoTo errHandler
@@ -1202,20 +1243,29 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 9, leadingColS
     Next PBL_rowStep
     
 'Ulozenie hodnot z pomocnych premennych do prislusnych stlpcov vystupneho harku na riadku "i"
-With PBL_outputWs
-        .Cells(i, 14).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
-        .Cells(i, 2).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refArea)
-        .Cells(i, 6).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(accountingEntry)
-        .Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
-        .Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(activity)
-        .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(valuation)
-        .Cells(i, 10).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(prices)
-        .Cells(i, 11).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMeasure)
-        .Cells(i, 12).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(transformation)
-        .Cells(i, 15).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsStatus)
-        .Cells(i, 16).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(confStatus)
-        .Cells(i, 27).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMult)
-    End With
+    If j > 0 Then
+        With PBL_outputWs
+            .Cells(i, 14).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
+            .Cells(i, 2).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refArea)
+            .Cells(i, 6).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(accountingEntry)
+            .Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
+            .Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(activity)
+            .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(valuation)
+            .Cells(i, 10).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(prices)
+            .Cells(i, 11).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMeasure)
+            .Cells(i, 12).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(transformation)
+            .Cells(i, 15).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsStatus)
+            .Cells(i, 16).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(confStatus)
+            .Cells(i, 27).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMult)
+        End With
+    Else
+        PBL_conversionFail = IncrementConversions(PBL_FAIL)
+        
+        errText = "Nepodarilo sa naËÌtaù hodnoty z h·rku: """ & PBL_worksheetName & """." & vbNewLine & _
+        "ProsÌm, skontrolujte si spr·vnosù vyplnenia riadiacich znakov."
+        
+        MsgBox errText, vbInformation, "Inform·cia"
+    End If
             
     On Error GoTo 0
     Exit Sub
@@ -1260,6 +1310,7 @@ Dim confStatus() As String
 
 Dim boolString As String
 Dim dataRange As Variant
+Dim errText As String
 
 'Spustenie vetvy "errHandler" ak sa vyskytne chyba
     On Error GoTo errHandler
@@ -1338,16 +1389,25 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 5, leadingColS
     Next PBL_rowStep
     
 'Ulozenie hodnot z pomocnych premennych do prislusnych stlpcov vystupneho harku na riadku "i"
-    With PBL_outputWs
-        .Cells(i, 12).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
-        .Cells(i, 3).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartArea)
-        .Cells(i, 4).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refSector)
-        .Cells(i, 6).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
-        .Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(instrAsset)
-        .Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(pensionFundtype)
-        .Cells(i, 13).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsStatus)
-        .Cells(i, 14).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(confStatus)
-    End With
+    If j > 0 Then
+        With PBL_outputWs
+            .Cells(i, 12).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
+            .Cells(i, 3).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartArea)
+            .Cells(i, 4).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refSector)
+            .Cells(i, 6).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
+            .Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(instrAsset)
+            .Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(pensionFundtype)
+            .Cells(i, 13).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsStatus)
+            .Cells(i, 14).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(confStatus)
+        End With
+    Else
+        PBL_conversionFail = IncrementConversions(PBL_FAIL)
+        
+        errText = "Nepodarilo sa naËÌtaù hodnoty z h·rku: """ & PBL_worksheetName & """." & vbNewLine & _
+        "ProsÌm, skontrolujte si spr·vnosù vyplnenia riadiacich znakov."
+        
+        MsgBox errText, vbInformation, "Inform·cia"
+    End If
     
     On Error GoTo 0
     Exit Sub
@@ -1398,6 +1458,7 @@ Dim timePeriod() As String
 
 Dim boolString As String
 Dim dataRange As Variant
+Dim errText As String
 
 'Spustenie vetvy "errHandler" ak sa vyskytne chyba
     On Error GoTo errHandler
@@ -1489,22 +1550,31 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 9, leadingColS
     Next PBL_rowStep
     
 'Ulozenie hodnot z pomocnych premennych do prislusnych stlpcov vystupneho harku na riadku "i"
-    With PBL_outputWs
-        .Cells(i, 16).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
-        .Cells(i, 4).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartArea)
-        .Cells(i, 5).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refSector)
-        .Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(accountingEntry)
-        .Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
-        .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(instrAsset)
-        .Cells(i, 10).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(activity)
-        .Cells(i, 11).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(expenditure)
-        .Cells(i, 12).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMeasure)
-        .Cells(i, 13).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(prices)
-        .Cells(i, 15).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(timePeriod)
-        .Cells(i, 17).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsStatus)
-        .Cells(i, 18).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(confStatus)
-        .Cells(i, 30).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMult)
-    End With
+    If j > 0 Then
+        With PBL_outputWs
+            .Cells(i, 16).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
+            .Cells(i, 4).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartArea)
+            .Cells(i, 5).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refSector)
+            .Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(accountingEntry)
+            .Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
+            .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(instrAsset)
+            .Cells(i, 10).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(activity)
+            .Cells(i, 11).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(expenditure)
+            .Cells(i, 12).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMeasure)
+            .Cells(i, 13).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(prices)
+            .Cells(i, 15).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(timePeriod)
+            .Cells(i, 17).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsStatus)
+            .Cells(i, 18).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(confStatus)
+            .Cells(i, 30).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(unitMult)
+        End With
+    Else
+        PBL_conversionFail = IncrementConversions(PBL_FAIL)
+        
+        errText = "Nepodarilo sa naËÌtaù hodnoty z h·rku: """ & PBL_worksheetName & """." & vbNewLine & _
+        "ProsÌm, skontrolujte si spr·vnosù vyplnenia riadiacich znakov."
+        
+        MsgBox errText, vbInformation, "Inform·cia"
+    End If
     
     On Error GoTo 0
     Exit Sub
@@ -1553,6 +1623,7 @@ Dim timePeriod() As String
 
 Dim boolString As String
 Dim dataRange As Variant
+Dim errText As String
 
 'Spustenie vetvy "errHandler" ak sa vyskytne chyba
     On Error GoTo errHandler
@@ -1641,21 +1712,30 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 8, leadingColS
     Next PBL_rowStep
     
 'Ulozenie hodnot z pomocnych premennych do prislusnych stlpcov vystupneho harku na riadku "i"
-    With PBL_outputWs
-        .Cells(i, 17).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
-        .Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
-        .Cells(i, 6).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(accountingEntry)
-        .Cells(i, 4).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refSector)
-        .Cells(i, 3).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartArea)
-        .Cells(i, 13).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(valuation)
-        .Cells(i, 33).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(custBreakdownLb)
-        .Cells(i, 15).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(custBreakdown)
-        .Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(activity)
-        .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(activityTo)
-        .Cells(i, 10).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(product)
-        .Cells(i, 11).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(productTo)
-        .Cells(i, 16).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(timePeriod)
-    End With
+    If j > 0 Then
+        With PBL_outputWs
+            .Cells(i, 17).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsValue)
+            .Cells(i, 7).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
+            .Cells(i, 6).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(accountingEntry)
+            .Cells(i, 4).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(refSector)
+            .Cells(i, 3).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(counterpartArea)
+            .Cells(i, 13).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(valuation)
+            .Cells(i, 33).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(custBreakdownLb)
+            .Cells(i, 15).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(custBreakdown)
+            .Cells(i, 8).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(activity)
+            .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(activityTo)
+            .Cells(i, 10).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(product)
+            .Cells(i, 11).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(productTo)
+            .Cells(i, 16).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(timePeriod)
+        End With
+    Else
+        PBL_conversionFail = IncrementConversions(PBL_FAIL)
+        
+        errText = "Nepodarilo sa naËÌtaù hodnoty z h·rku: """ & PBL_worksheetName & """." & vbNewLine & _
+        "ProsÌm, skontrolujte si spr·vnosù vyplnenia riadiacich znakov."
+        
+        MsgBox errText, vbInformation, "Inform·cia"
+    End If
     
     On Error GoTo 0
     Exit Sub
