@@ -1349,10 +1349,10 @@ Dim errText As String
 'Pocitadlo hodnot OBS_VALUE pre spravne dimenzovanie poli
     j = 0
     
-dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 5, leadingColStart - 3), PBL_inputWs.Cells(leadingRowEnd, leadingColEnd)).Value
+dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 4, leadingColStart - 3), PBL_inputWs.Cells(leadingRowEnd, leadingColEnd)).Value
     
 'Hlavny cyklus
-    For PBL_rowStep = 6 To UBound(dataRange, 1)
+    For PBL_rowStep = 5 To UBound(dataRange, 1)
 
 'Kontrola nacitania riadku
         boolString = dataRange(PBL_rowStep, 1)
@@ -1360,7 +1360,7 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 5, leadingColS
             For PBL_colStep = 4 To UBound(dataRange, 2) Step 3
 
 'Kontrola nacitania stlpca
-                boolString = dataRange(5, PBL_colStep)
+                boolString = dataRange(4, PBL_colStep)
                 If boolString = "1" And PBL_colStep + 2 <= UBound(dataRange, 2) Then
 
 'Nacitanie dat do pomocnych premennych

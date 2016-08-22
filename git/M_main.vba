@@ -6,7 +6,7 @@ Option Explicit
 '----------------------------------------------
 Sub ProgramInit()
     
-    PBL_programVersion = "v0.94"
+    PBL_programVersion = "v0.95"
     PBL_programName = ActiveWorkbook.FullName
     
     F_main.Show vbModeless
