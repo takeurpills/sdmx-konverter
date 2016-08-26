@@ -451,6 +451,33 @@ End Sub
 '---------------------------------
 'Konverzia dat z tabuliek typu SEC
 '---------------------------------
+Sub DataSort(conversionType As Integer)
+Dim sortRange As Range
+Dim sortKey As String
+
+Select Case conversionType
+    Case PBL_SEC, PBL_T9XX, PBL_T200, PBL_T1100
+        sortKey = "S1"
+    Case PBL_REG
+        sortKey = "M1"
+    Case PBL_PENS
+        sortKey = "K1"
+    Case PBL_MAIN
+        sortKey = "O1"
+    Case PBL_SU
+        sortKey = "P1"
+End Select
+
+With PBL_outputWs
+    .Range("A1").CurrentRegion.Sort key1:=.Range(sortKey), order1:=xlAscending, Header:=xlYes
+End With
+
+End Sub
+
+
+'---------------------------------
+'Konverzia dat z tabuliek typu SEC
+'---------------------------------
 Sub SECdataConversion(startRange As String, endRange As String)
 
 Const SUB_NAME = "SECdataConversion"

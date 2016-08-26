@@ -6,7 +6,7 @@ Option Explicit
 '----------------------------------------------
 Sub ProgramInit()
     
-    PBL_programVersion = "v0.95"
+    PBL_programVersion = "v0.97"
     PBL_programName = ActiveWorkbook.FullName
     
     F_main.Show vbModeless
@@ -175,24 +175,38 @@ Dim startVal As Range, endVal As Range
                 Next i
             End If
 
-'Ulozenie vystupu a object-cleanup
+'Radenie hodnot, ulozenie vystupu a object-cleanup
             If PBL_conversionOk > 0 Then
+            
+                DataSort (conversionType)
+            
                 folderPath = PBL_xlApp.ActiveWorkbook.Path
                 timeStamp = Format(CStr(Now), "yyyy_mm_dd_hhmmss")
                 saveName = folderPath & "\" & workbookName & "_" & timeStamp
-                PBL_xlNew.Workbooks(1).SaveAs fileName:=saveName, FileFormat:=xlCSV, local:=True
+                With PBL_xlNew
+                    .DecimalSeparator = "."
+                    .UseSystemSeparators = False
+                    .Workbooks(1).SaveAs fileName:=saveName, FileFormat:=xlCSV, local:=True
+                End With
             End If
             
             With PBL_xlNew
                 .Calculation = xlCalculationAutomatic
                 .ScreenUpdating = True
+                .DecimalSeparator = ","
+                .UseSystemSeparators = True
                 .Workbooks(1).Close False
                 .Quit
             End With
 
             Call UnloadForms
              
-            PBL_xlApp.Quit
+            With PBL_xlApp
+                If .Workbooks(1).ReadOnly = True Then
+                    .Workbooks(1).Close False
+                End If
+                .Quit
+            End With
             
             Set PBL_xlApp = Nothing
             Set PBL_xlNew = Nothing
