@@ -448,28 +448,48 @@ Dim typeFlag As String
 End Sub
 
 
-'---------------------------------
-'Konverzia dat z tabuliek typu SEC
-'---------------------------------
+'-------------------------
+'Sortovanie hodnot vystupu
+'-------------------------
 Sub DataSort(conversionType As Integer)
+Dim i As Integer
 Dim sortRange As Range
-Dim sortKey As String
+Dim sortKey As Variant
+Dim timePer As String
 
 Select Case conversionType
     Case PBL_SEC, PBL_T9XX, PBL_T200, PBL_T1100
-        sortKey = "S1"
+        timePer = "S1"
+        sortKey = Array("A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "L1", "M1", "N1", "O1", "P1", _
+                        "Q1", "R1", "U1", "V1", "W1", "X1", "Y1", "Z1", "AA1", "AB1", "AC1", "AD1", "AE1", "AF1", "AG1", _
+                        "AH1", "AI1", "AJ1", "AK1", "AL1", "AM1", "AN1", "AO1", "AP1", "AQ1", "AR1", "AS1")
     Case PBL_REG
-        sortKey = "M1"
+        timePer = "M1"
+        sortKey = Array("A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "L1", "O1", "P1", "Q1", "R1", _
+                        "S1", "T1", "U1", "V1", "W1", "X1", "Y1", "Z1", "AA1", "AB1", "AC1", "AD1", "AE1", "AF1", "AG1")
     Case PBL_PENS
-        sortKey = "K1"
+        timePer = "K1"
+        sortKey = Array("A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "M1", "N1", "O1", "P1", "Q1", "R1", _
+                        "S1", "T1", "U1", "V1", "W1", "X1", "Y1", "Z1", "AA1", "AB1", "AC1", "AD1", "AE1")
     Case PBL_MAIN
-        sortKey = "O1"
+        timePer = "O1"
+        sortKey = Array("A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "L1", "M1", "N1", "Q1", "R1", _
+                        "S1", "T1", "U1", "V1", "W1", "X1", "Y1", "Z1", "AA1", "AB1", "AC1", "AD1", "AE1", "AF1", "AG1", _
+                        "AH1", "AI1", "AJ1")
     Case PBL_SU
-        sortKey = "P1"
+        timePer = "P1"
+        sortKey = Array("A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "L1", "M1", "N1", "O1", "R1", _
+                        "S1", "T1", "U1", "V1", "W1", "X1", "Y1", "Z1", "AA1", "AB1", "AC1", "AD1", "AE1", "AF1", "AG1", _
+                        "AH1", "AI1", "AJ1", "AK1")
 End Select
 
+'Sortovanie podla sekundarneho kluca "TIME_PERIOD" a podla primarnych klucov (vsetko ostatne, okrem OBS_VALUE)
 With PBL_outputWs
-    .Range("A1").CurrentRegion.Sort key1:=.Range(sortKey), order1:=xlAscending, Header:=xlYes
+    .Range("A1").CurrentRegion.Sort key1:=.Range(timePer), order1:=xlAscending, Header:=xlYes
+
+    For i = 0 To UBound(sortKey)
+        .Range("A1").CurrentRegion.Sort key1:=.Range(sortKey(i)), order1:=xlAscending, Header:=xlYes
+    Next i
 End With
 
 End Sub
