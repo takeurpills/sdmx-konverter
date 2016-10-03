@@ -41,3 +41,38 @@ Dim testEnd As Range
     End If
 
 End Function
+
+'-------------------------------------------------------------
+'Funkcia na vymazanie posledneho carriage return z csv vystupu
+'-------------------------------------------------------------
+Function deleteLastLine(fileName)
+
+Dim myFile As String
+Dim objFSO As FileSystemObject
+Dim objFile As Object
+Dim strfile As String
+Dim intLength As Long
+Dim strend As String
+
+Const ForReading = 1
+Const ForWriting = 2
+
+myFile = fileName & ".csv"
+ 
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+ 
+Set objFile = objFSO.OpenTextFile(myFile, ForReading)
+strfile = objFile.ReadAll
+objFile.Close
+ 
+intLength = Len(strfile)
+strend = Right(strfile, 2)
+ 
+If strend = vbCrLf Then
+    strfile = Left(strfile, intLength - 2)
+    Set objFile = objFSO.OpenTextFile(myFile, ForWriting)
+    objFile.Write strfile
+    objFile.Close
+End If
+
+End Function

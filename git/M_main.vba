@@ -198,7 +198,9 @@ Dim startVal As Range, endVal As Range
                 .Workbooks(1).Close False
                 .Quit
             End With
-
+            
+'Vymaze posledny carriage return z .csv [classic excel bug = feature :) ]
+            deleteLastLine (saveName)
             Call UnloadForms
              
             With PBL_xlApp
@@ -270,5 +272,3 @@ Sub AppClose()
     End If
 
 End Sub
-
-
