@@ -6,40 +6,48 @@ Option Explicit
 '---------------------------------------------------------------
 Sub OpenSourceFile()
 
+Dim fileOpenDialog As Variant
+
 Const SUB_NAME = "openSourceFile"
 
 'Spustenie vetvy "errHandler" ak sa vyskytne chyba
     On Error GoTo errHandler
 
 'Otvorenie dialogoveho okna na vyber zdrojoveho suboru
-    PBL_fileToOpen = Application.GetOpenFilename(FileFilter:="Excel,*.xls; *.xlsx; *.xlsm", _
+    fileOpenDialog = Application.GetOpenFilename(FileFilter:="Excel,*.xls; *.xlsx; *.xlsm", _
                                                  Title:="Otvoriù s˙bor", MultiSelect:=False)
     
-    If PBL_fileToOpen <> False Then
+    If fileOpenDialog <> False Then
     
+        PBL_fileToOpen = fileOpenDialog
+        
+        If PBL_fileToOpen <> False Then
+        
 'Skontroluje ci bezi instancia "xlApp" do ktoreho sa otvara zdrojovy subor
-        If PBL_xlApp Is Nothing Then
-        Else
-            PBL_xlApp.Quit
-            Set PBL_xlApp = Nothing
-        End If
-
-'Otvorenie zdrojoveho suboru do novej instancie v pozadi
-        Set PBL_xlOld = GetObject(PBL_programName).Application
-        Set PBL_xlApp = CreateObject("Excel.Application")
-        Set PBL_inputWb = PBL_xlApp.Workbooks.Open(fileName:=PBL_fileToOpen, ReadOnly:=True)
-
-'Vypisanie cesty zvoleneho suboru do formularu
-        With F_main
-            .tbSourceFile.Value = PBL_inputWb.FullName
-            .tbSourceFile.SetFocus
-        End With
+            If PBL_xlApp Is Nothing Then
+            Else
+                PBL_xlApp.Quit
+                Set PBL_xlApp = Nothing
+                
+                Call UnloadForms
+            End If
     
-        On Error GoTo 0
+'Otvorenie zdrojoveho suboru do novej instancie v pozadi
+            Set PBL_xlOld = GetObject(PBL_programName).Application
+            Set PBL_xlApp = CreateObject("Excel.Application")
+            Set PBL_inputWb = PBL_xlApp.Workbooks.Open(fileName:=PBL_fileToOpen, ReadOnly:=True)
+    
+'Vypisanie cesty zvoleneho suboru do formularu
+            With F_main
+                .tbSourceFile.Value = PBL_inputWb.FullName
+                .tbSourceFile.SetFocus
+            End With
         
+            On Error GoTo 0
+            
 'Volanie procedury na vyplnenie listboxov
-        Call InputItems
-        
+            Call InputItems
+        End If
     End If
     Exit Sub
     
@@ -461,26 +469,26 @@ Select Case conversionType
     Case PBL_SEC, PBL_T9XX, PBL_T200, PBL_T1100
         timePer = "S1"
         sortKey = Array("A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "L1", "M1", "N1", "O1", "P1", _
-                        "Q1", "R1", "U1", "V1", "W1", "X1", "Y1", "Z1", "AA1", "AB1", "AC1", "AD1", "AE1", "AF1", "AG1", _
-                        "AH1", "AI1", "AJ1", "AK1", "AL1", "AM1", "AN1", "AO1", "AP1", "AQ1", "AR1", "AS1")
+                        "Q1", "R1", "W1", "X1", "Y1", "Z1", "AA1", "AB1", "AC1", "AD1", "AE1", "AF1", "AG1", "AH1", _
+                        "AI1", "AJ1", "AK1", "AL1", "AM1", "AN1", "AO1", "AP1", "AQ1", "AR1", "AS1")
     Case PBL_REG
         timePer = "M1"
-        sortKey = Array("A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "L1", "O1", "P1", "Q1", "R1", _
-                        "S1", "T1", "U1", "V1", "W1", "X1", "Y1", "Z1", "AA1", "AB1", "AC1", "AD1", "AE1", "AF1", "AG1")
+        sortKey = Array("A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "L1", "Q1", "R1", "S1", "T1", _
+                        "U1", "V1", "W1", "X1", "Y1", "Z1", "AA1", "AB1", "AC1", "AD1", "AE1", "AF1", "AG1")
     Case PBL_PENS
         timePer = "K1"
-        sortKey = Array("A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "M1", "N1", "O1", "P1", "Q1", "R1", _
-                        "S1", "T1", "U1", "V1", "W1", "X1", "Y1", "Z1", "AA1", "AB1", "AC1", "AD1", "AE1")
+        sortKey = Array("A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "O1", "P1", "Q1", "R1", "S1", "T1", _
+                        "U1", "V1", "W1", "X1", "Y1", "Z1", "AA1", "AB1", "AC1", "AD1", "AE1")
     Case PBL_MAIN
         timePer = "O1"
-        sortKey = Array("A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "L1", "M1", "N1", "Q1", "R1", _
-                        "S1", "T1", "U1", "V1", "W1", "X1", "Y1", "Z1", "AA1", "AB1", "AC1", "AD1", "AE1", "AF1", "AG1", _
-                        "AH1", "AI1", "AJ1")
+        sortKey = Array("A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "L1", "M1", "N1", "S1", "T1", _
+                        "U1", "V1", "W1", "X1", "Y1", "Z1", "AA1", "AB1", "AC1", "AD1", "AE1", "AF1", "AG1", "AH1", _
+                        "AI1", "AJ1")
     Case PBL_SU
         timePer = "P1"
-        sortKey = Array("A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "L1", "M1", "N1", "O1", "R1", _
-                        "S1", "T1", "U1", "V1", "W1", "X1", "Y1", "Z1", "AA1", "AB1", "AC1", "AD1", "AE1", "AF1", "AG1", _
-                        "AH1", "AI1", "AJ1", "AK1")
+        sortKey = Array("A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "L1", "M1", "N1", "O1", "T1", _
+                        "U1", "V1", "W1", "X1", "Y1", "Z1", "AA1", "AB1", "AC1", "AD1", "AE1", "AF1", "AG1", "AH1", _
+                        "AI1", "AJ1", "AK1")
 End Select
 
 'Sortovanie podla sekundarneho kluca "TIME_PERIOD" a podla primarnych klucov (vsetko ostatne, okrem OBS_VALUE)

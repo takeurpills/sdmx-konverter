@@ -6,7 +6,7 @@ Option Explicit
 '----------------------------------------------
 Sub ProgramInit()
     
-    PBL_programVersion = "v1.0"
+    PBL_programVersion = "v1.02"
     PBL_programName = ActiveWorkbook.FullName
     
     F_main.Show vbModeless
@@ -200,7 +200,9 @@ Dim startVal As Range, endVal As Range
             End With
             
 'Vymaze posledny carriage return z .csv [classic excel bug = feature :) ]
-            deleteLastLine (saveName)
+            If PBL_conversionOk > 0 Then
+                deleteLastLine (saveName)
+            End If
             Call UnloadForms
              
             With PBL_xlApp
