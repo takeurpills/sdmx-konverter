@@ -157,13 +157,13 @@ Dim paramValue As String
             
         Case PBL_T9XX
         
-'Nacitanie 2*19 = 38 hodnot
+'Nacitanie 2*18 = 36 hodnot
             i = 0
-            ReDim PBL_parameterFix(1 To 38)
+            ReDim PBL_parameterFix(1 To 36)
         
             For s = 2 To 4 Step 2
-                For r = 1 To 19
-                    x = r + 19 * i
+                For r = 1 To 18
+                    x = r + 18 * i
                     paramValue = PBL_inputWs.Cells(r, s)
                     PBL_parameterFix(x) = paramValue
                 Next
@@ -289,7 +289,7 @@ Dim copyEnd As Long
             End With
             
         Case PBL_T9XX
-            usedColumns = Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 21, 22, 25, 23, 26, 24, 28, 29, 30, 32, 33, 34, 35, 36, 37, 38, 27, 40, 43, 44, 45, 39)
+            usedColumns = Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 25, 23, 26, 24, 28, 29, 30, 32, 33, 34, 35, 36, 37, 38, 27, 40, 43, 44, 45, 39)
             copyStart = PBL_copyStart
             copyEnd = PBL_outputWs.Cells(Rows.count, "T").End(xlUp).Row
             
@@ -917,6 +917,8 @@ Dim custBreakdownLb() As String
 Dim gfsEcofunc() As String
 Dim gfsTaxcat() As String
 Dim obsValue() As Variant
+Dim obsStatus() As Variant
+Dim confStatus() As Variant
 
 Dim boolString As String
 Dim dataRange As Variant
@@ -984,6 +986,8 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 2, leadingColS
                     ReDim Preserve gfsEcofunc(j)
                     ReDim Preserve gfsTaxcat(j)
                     ReDim Preserve obsValue(j)
+                    ReDim Preserve obsStatus(j)
+                    ReDim Preserve confStatus(j)
                     
                     timePeriod(j) = dataRange(1, PBL_colStep)
                     sto(j) = dataRange(PBL_rowStep, 2)
@@ -992,6 +996,8 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 2, leadingColS
                     gfsEcofunc(j) = dataRange(PBL_rowStep, 6)
                     gfsTaxcat(j) = dataRange(PBL_rowStep, 7)
                     obsValue(j) = dataRange(PBL_rowStep, PBL_colStep)
+                    obsStatus(j) = dataRange(PBL_rowStep, PBL_colStep + 1)
+                    confStatus(j) = dataRange(PBL_rowStep, PBL_colStep + 2)
 
                     j = j + 1
                 End If
@@ -1006,6 +1012,8 @@ dataRange = PBL_inputWs.Range(PBL_inputWs.Cells(leadingRowStart - 2, leadingColS
             .Cells(i, 9).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(sto)
             .Cells(i, 18).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(custBreakdown)
             .Cells(i, 19).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(timePeriod)
+            .Cells(i, 21).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(obsStatus)
+            .Cells(i, 22).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(confStatus)
             .Cells(i, 31).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(custBreakdownLb)
             .Cells(i, 41).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsEcofunc)
             .Cells(i, 42).Resize(UBound(obsValue) + 1, 1).Value = PBL_xlNew.Transpose(gfsTaxcat)
