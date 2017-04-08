@@ -76,3 +76,22 @@ If strend = vbCrLf Then
 End If
 
 End Function
+
+'------------------------------
+'Funkcia na traspoziciu 1D pola
+'------------------------------
+Function transposeArray(myArray As Variant) As Variant
+Dim x As Long
+Dim Y As Long
+Dim Xupper As Long
+Dim Yupper As Long
+Dim tempArray As Variant
+    Xupper = UBound(myArray, 1)
+    Yupper = 0
+    Y = Yupper
+    ReDim tempArray(Xupper, Yupper)
+    For x = 0 To Xupper
+        tempArray(x, Y) = myArray(x)
+    Next x
+    transposeArray = tempArray
+End Function
